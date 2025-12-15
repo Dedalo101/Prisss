@@ -100,30 +100,14 @@ main {
 }
 
 .about {
-    max-width: 700px;
-    padding: 3rem;
-    background: rgba(0, 0, 0, 0.6);
-    /* Neon border and shadow */
-    border: 3px solid #ff00ff; /* Magenta border */
-    border-radius: 8px;
-    box-shadow: 
-        0 0 15px #ff00ff, 
-        0 0 40px rgba(64, 196, 255, 0.5), /* Cyan/Blue Glow */
-        inset 0 0 10px rgba(255, 0, 255, 0.5);
-
-    /* Subtle 3D-grid/floating effect */
-    transform: perspective(800px) rotateX(2deg) translateY(-10px); 
-    transition: transform 0.5s ease;
-}
-
-.about:hover {
-    transform: perspective(800px) rotateX(0deg) translateY(0);
+    padding: 2rem;
+    text-align: center;
 }
 
 .bio {
     font-size: clamp(1rem, 1.8vw, 1.2rem);
     line-height: 1.6;
-    color: #e0e0e0;
+    color: #ffd6ff;
     letter-spacing: 0.08rem;
 }
 
