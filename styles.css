@@ -127,6 +127,16 @@ main {
     letter-spacing: 0.08rem;
 }
 
+.bio a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.bio a:hover {
+    color: #ff00ff;
+}
+
 footer {
     text-align: center;
 }
