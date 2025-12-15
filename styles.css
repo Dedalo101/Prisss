@@ -100,30 +100,31 @@ main {
 }
 
 .about {
-    display: block;
-    max-width: 600px;
-    padding: 2.5rem 3rem;
-    background: rgba(0, 0, 0, 0.8);
-    border: 3px solid #00ffff;
-    border-radius: 8px;
-    box-shadow: 
-        0 0 20px rgba(0, 255, 255, 0.6),
-        0 0 40px rgba(0, 255, 255, 0.4),
-        0 0 60px rgba(0, 255, 255, 0.2),
-        inset 0 0 20px rgba(0, 255, 255, 0.1);
+    display: inline-block;
+    padding: 2rem 3rem;
     text-align: center;
-    text-decoration: none;
+    text-decoration: none; /* Remove underline */
+    color: #ffd6ff;
+    
+    /* Cyan glowing border frame */
+    border: 2px solid #00ffff;
+    box-shadow: 
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 30px #00ffff,
+        inset 0 0 10px rgba(0, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease;
-    cursor: pointer;
 }
 
 .about:hover {
+    text-decoration: none; /* Keep no underline on hover */
     box-shadow: 
-        0 0 30px rgba(0, 255, 255, 0.8),
-        0 0 50px rgba(0, 255, 255, 0.6),
-        0 0 80px rgba(0, 255, 255, 0.3),
-        inset 0 0 30px rgba(0, 255, 255, 0.15);
-    transform: scale(1.02);
+        0 0 15px #00ffff,
+        0 0 30px #00ffff,
+        0 0 45px #00ffff,
+        inset 0 0 15px rgba(0, 255, 255, 0.3);
+    transform: scale(1.05);
 }
 
 .bio {
