@@ -24,6 +24,85 @@ const PULSE_FREQ = TEMPO * 8;
 const FLASH_THRESHOLD = 0.9;
 const GLITCH_FREQ = TEMPO * 4;
 
+const PERFORMANCE_PRESETS = [
+    {
+        name: 'low',
+        pixelStep: 5,
+        maxIterations: 24,
+        dataDensity: 70,
+        dataDensityMobile: 40,
+        barnsleyPoints: 1600,
+        dragonIterations: 6,
+        spiralDepth: 3,
+        glitchSlices: 1,
+        glitchNoise: 0.0015,
+        glitchRows: 3,
+        glitchMosh: 1,
+        glitchInterval: 420,
+        snowflakeIterations: 2
+    },
+    {
+        name: 'medium',
+        pixelStep: 4,
+        maxIterations: 36,
+        dataDensity: 110,
+        dataDensityMobile: 60,
+        barnsleyPoints: 2800,
+        dragonIterations: 8,
+        spiralDepth: 4,
+        glitchSlices: 2,
+        glitchNoise: 0.003,
+        glitchRows: 5,
+        glitchMosh: 2,
+        glitchInterval: 320,
+        snowflakeIterations: 3
+    },
+    {
+        name: 'high',
+        pixelStep: 3,
+        maxIterations: 48,
+        dataDensity: 150,
+        dataDensityMobile: 80,
+        barnsleyPoints: 4200,
+        dragonIterations: 10,
+        spiralDepth: 5,
+        glitchSlices: 3,
+        glitchNoise: 0.0045,
+        glitchRows: 6,
+        glitchMosh: 4,
+        glitchInterval: 260,
+        snowflakeIterations: 4
+    }
+];
+
+const performanceState = {
+    presetIndex: isMobile ? 1 : 2,
+    fpsSample: 60,
+    lastTimestamp: performance.now(),
+    framesElapsed: 0
+};
+
+const TARGET_FPS = isMobile ? 45 : 55;
+const FPS_UPPER_MARGIN = 10;
+const FPS_LOWER_MARGIN = 8;
+
+let lastGlitchTime = performance.now();
+
+function getQuality() {
+    return PERFORMANCE_PRESETS[performanceState.presetIndex];
+}
+
+let reusableImageData = null;
+
+function acquireImageData() {
+    if (!reusableImageData || reusableImageData.width !== width || reusableImageData.height !== height) {
+        reusableImageData = ctx.createImageData(width, height);
+    } else {
+        reusableImageData.data.fill(0);
+    }
+    return reusableImageData;
+}
+
 // Disable scroll on mobile
 document.body.style.overflow = 'hidden';
 canvas.style.position = 'fixed';
@@ -58,6 +137,7 @@ function initAudio() {
 function resizeCanvas() {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
+    reusableImageData = null;
 }
 
 resizeCanvas();
@@ -92,10 +172,11 @@ function pulseScale() {
 }
 
 // Data stream
-function drawDataStream() {
-    const density = (isMobile ? 50 : 100) + mouseX * (isMobile ? 50 : 100);
-    const speed = 10 + mouseY * 20;
-    
+function drawDataStream(quality) {
+    const baseDensity = isMobile ? quality.dataDensityMobile : quality.dataDensity;
+    const density = baseDensity + mouseX * baseDensity * 0.5;
+    const speed = 8 + mouseY * 18;
+
     for (let i = 0; i < density; i++) {
         const x = Math.random() * width;
         const y = (Math.random() * height + time * speed) % height;
@@ -135,20 +216,23 @@ function drawDataPath(centerX, centerY, segments, depth, rotation) {
 }
 
 // Data field (Julia)
-function drawDataField() {
-    const imageData = ctx.createImageData(width, height);
+function drawDataField(quality) {
+    const imageData = acquireImageData();
     const data = imageData.data;
-    
-    const maxIterations = isMobile ? 30 : 60;
-    const zoom = 1.3 + mouseX * 0.6 + 0.3 * Math.sin(time * PULSE_FREQ);
+
+    const maxIterations = Math.round(quality.maxIterations + mouseY * 8);
+    const zoom = 1.2 + mouseX * 0.6 + 0.25 * Math.sin(time * PULSE_FREQ);
     const cX = -0.75 + mouseX * 0.25;
     const cY = 0.2 + mouseY * 0.15;
-    
-    for (let px = 0; px < width; px += 2) {
-        for (let py = 0; py < height; py += 2) {
-            let x = (px - width / 2) / (0.5 * zoom * width);
-            let y = (py - height / 2) / (0.5 * zoom * height);
-            
+    const step = quality.pixelStep;
+
+    for (let px = 0; px < width; px += step) {
+        for (let py = 0; py < height; py += step) {
+            const sampleX = px + step * 0.5;
+            const sampleY = py + step * 0.5;
+            let x = (sampleX - width / 2) / (0.5 * zoom * width);
+            let y = (sampleY - height / 2) / (0.5 * zoom * height);
+
             let iteration = 0;
             while (x * x + y * y <= 4 && iteration < maxIterations) {
                 const xTemp = x * x - y * y + cX;
@@ -156,11 +240,11 @@ function drawDataField() {
                 x = xTemp;
                 iteration++;
             }
-            
+
             if (iteration < maxIterations) {
                 const value = 255 * (iteration / maxIterations * pulseScale());
-                for (let dx = 0; dx < 2 && px + dx < width; dx++) {
-                    for (let dy = 0; dy < 2 && py + dy < height; dy++) {
+                for (let dx = 0; dx < step && px + dx < width; dx++) {
+                    for (let dy = 0; dy < step && py + dy < height; dy++) {
                         const index = ((py + dy) * width + (px + dx)) * 4;
                         data[index] = value;
                         data[index + 1] = value;
@@ -171,7 +255,7 @@ function drawDataField() {
             }
         }
     }
-    
+
     ctx.putImageData(imageData, 0, 0);
 }
 
@@ -205,51 +289,60 @@ function drawBinaryTriangle(offsetX, offsetY, size, depth) {
 }
 
 // Spiral fractal
-function drawSpiralPattern() {
+function drawSpiralPattern(quality) {
     ctx.lineCap = 'round';
-    ctx.shadowColor = 'rgba(0,0,0,0.7)';
-    ctx.shadowOffsetX = 10;
-    ctx.shadowOffsetY = 5;
-    ctx.shadowBlur = 10;
+    if (quality.name !== 'low') {
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowOffsetX = 6;
+        ctx.shadowOffsetY = 4;
+        ctx.shadowBlur = 8;
+    } else {
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+    }
 
-    const size = Math.min(width, height) * 0.3;
-    const maxLevel = 5 + Math.floor(mouseX * 3);
-    const scale = 0.8 + mouseY * 0.1;
-    const spread = 0.2 + mouseX * 0.2 + Math.sin(time) * 0.1;
-    const color = 'rgba(255, 255, 255, 0.8)';
-    const lineWidth = 6 * pulseScale();
-    const sides = Math.floor(3 + mouseY * 4);
+    const size = Math.min(width, height) * 0.28;
+    const maxLevel = quality.spiralDepth + Math.floor(mouseX * 2);
+    const scale = 0.78 + mouseY * 0.08;
+    const spread = 0.18 + mouseX * 0.18 + Math.sin(time) * 0.08;
+    const color = 'rgba(255, 255, 255, 0.78)';
+    const lineWidth = Math.max(2, 5 * pulseScale());
+    const sides = Math.max(3, Math.floor(3 + mouseY * 3));
 
     function drawBranch(level) {
         if (level > maxLevel) return;
         ctx.beginPath();
-        ctx.moveTo(0,0);
+        ctx.moveTo(0, 0);
         ctx.lineTo(size, 0);
         ctx.stroke();
 
-        ctx.save();
-        ctx.translate(size * 0.1, 0);
-        ctx.scale(scale, scale);
-        ctx.rotate(spread);
-        drawBranch(level + 1);
-        ctx.restore();
+        if (level < maxLevel) {
+            ctx.save();
+            ctx.translate(size * 0.12, 0);
+            ctx.scale(scale, scale);
+            ctx.rotate(spread);
+            drawBranch(level + 1);
+            ctx.restore();
 
-        ctx.save();
-        ctx.translate(size * 0.5, 0);
-        ctx.scale(scale, scale);
-        ctx.rotate(spread * 1.5);
-        drawBranch(level + 1);
-        ctx.restore();
+            ctx.save();
+            ctx.translate(size * 0.48, 0);
+            ctx.scale(scale, scale);
+            ctx.rotate(spread * 1.4);
+            drawBranch(level + 1);
+            ctx.restore();
 
-        ctx.save();
-        ctx.translate(size * 0.6, 0);
-        ctx.scale(scale * 0.3, scale * 0.3);
-        ctx.rotate(spread * 0.5);
-        drawBranch(level + 1);
-        ctx.restore();
+            if (quality.name !== 'low') {
+                ctx.save();
+                ctx.translate(size * 0.62, 0);
+                ctx.scale(scale * 0.35, scale * 0.35);
+                ctx.rotate(spread * 0.6);
+                drawBranch(level + 1);
+                ctx.restore();
+            }
+        }
 
         ctx.beginPath();
-        ctx.arc(size * 1.1,0,size * 0.09, 0, Math.PI * 2);
+        ctx.arc(size * 1.05, 0, size * 0.08, 0, Math.PI * 2);
         ctx.fill();
     }
 
@@ -258,26 +351,31 @@ function drawSpiralPattern() {
     ctx.fillStyle = color;
     ctx.lineWidth = lineWidth;
     ctx.save();
-    ctx.translate(width/2, height/2);
-    for (let i = 0; i < sides; i++){
-        ctx.rotate((Math.PI * 2)/sides + time * 0.1);
+    ctx.translate(width / 2, height / 2);
+    for (let i = 0; i < sides; i++) {
+        ctx.rotate((Math.PI * 2) / sides + time * 0.09);
         drawBranch(0);
     }
     ctx.restore();
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
 }
 
 // Mandelbrot
-function drawMandelbrot() {
-    const imageData = ctx.createImageData(width, height);
+function drawMandelbrot(quality) {
+    const imageData = acquireImageData();
     const data = imageData.data;
-    
-    const maxIterations = isMobile ? 30 : 60;
-    const zoom = 1.3 + mouseX * 0.6 + 0.3 * Math.sin(time * PULSE_FREQ);
-    
-    for (let px = 0; px < width; px += 2) {
-        for (let py = 0; py < height; py += 2) {
-            let x0 = (px - width / 2) / (0.25 * zoom * width) + mouseX * 0.5 - 0.5;
-            let y0 = (py - height / 2) / (0.25 * zoom * height) + mouseY * 0.5;
+
+    const maxIterations = Math.round(quality.maxIterations + mouseY * 6);
+    const zoom = 1.25 + mouseX * 0.55 + 0.25 * Math.sin(time * PULSE_FREQ);
+    const step = quality.pixelStep;
+
+    for (let px = 0; px < width; px += step) {
+        for (let py = 0; py < height; py += step) {
+            const sampleX = px + step * 0.5;
+            const sampleY = py + step * 0.5;
+            let x0 = (sampleX - width / 2) / (0.25 * zoom * width) + mouseX * 0.4 - 0.5;
+            let y0 = (sampleY - height / 2) / (0.25 * zoom * height) + mouseY * 0.4;
             let x = 0;
             let y = 0;
             let iteration = 0;
@@ -287,11 +385,11 @@ function drawMandelbrot() {
                 x = xTemp;
                 iteration++;
             }
-            
+
             if (iteration < maxIterations) {
                 const value = 255 * (iteration / maxIterations * pulseScale());
-                for (let dx = 0; dx < 2 && px + dx < width; dx++) {
-                    for (let dy = 0; dy < 2 && py + dy < height; dy++) {
+                for (let dx = 0; dx < step && px + dx < width; dx++) {
+                    for (let dy = 0; dy < step && py + dy < height; dy++) {
                         const index = ((py + dy) * width + (px + dx)) * 4;
                         data[index] = value;
                         data[index + 1] = value;
@@ -302,22 +400,22 @@ function drawMandelbrot() {
             }
         }
     }
-    
+
     ctx.putImageData(imageData, 0, 0);
 }
 
 // Dragon Curve
-function drawDragonCurve() {
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-    ctx.lineWidth = 2 * pulseScale();
+function drawDragonCurve(quality) {
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.78)';
+    ctx.lineWidth = Math.max(1.5, 1.8 * pulseScale());
     ctx.beginPath();
-    
+
     let x = width / 2;
     let y = height / 2;
     let angle = 0;
-    const length = 5 + mouseY * 10;
-    const iterations = (isMobile ? 8 : 10) + Math.floor(mouseX * 5);
-    
+    const length = 4 + mouseY * 8;
+    const iterations = Math.min(12, quality.dragonIterations + Math.floor(mouseX * 3));
+
     function dragon(iter, dir) {
         if (iter === 0) {
             const endX = x + length * Math.cos(angle);
@@ -332,18 +430,18 @@ function drawDragonCurve() {
         angle += dir * Math.PI / 2;
         dragon(iter - 1, -1);
     }
-    
+
     dragon(iterations, 1);
     ctx.stroke();
 }
 
 // Barnsley Fern
-function drawBarnsleyFern() {
-    ctx.fillStyle = 'rgba(0, 255, 0, 0.8)';
-    const points = isMobile ? 2000 : 5000;
+function drawBarnsleyFern(quality) {
+    ctx.fillStyle = 'rgba(0, 255, 0, 0.75)';
+    const points = quality.barnsleyPoints;
     let x = 0;
     let y = 0;
-    
+
     for (let i = 0; i < points; i++) {
         const r = Math.random();
         let nx, ny;
@@ -362,20 +460,20 @@ function drawBarnsleyFern() {
         }
         x = nx;
         y = ny;
-        const px = width / 2 + x * 50 + mouseX * 100 - 50;
-        const py = height - y * 50 - mouseY * 100;
+        const px = width / 2 + x * 50 + mouseX * 80 - 40;
+        const py = height - y * 50 - mouseY * 90;
         ctx.fillRect(px, py, 1, 1);
     }
 }
 
 // Koch Snowflake
-function drawKochSnowflake() {
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+function drawKochSnowflake(quality) {
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.78)';
     ctx.lineWidth = 1;
-    
-    const size = Math.min(width, height) * 0.3;
-    const iterations = (isMobile ? 3 : 4) + Math.floor(mouseX * 2);
-    
+
+    const size = Math.min(width, height) * 0.28;
+    const iterations = Math.max(1, Math.min(5, quality.snowflakeIterations + Math.floor(mouseX * 1.5)));
+
     function koch(x1, y1, x2, y2, iter) {
         if (iter === 0) {
             ctx.beginPath();
@@ -392,20 +490,20 @@ function drawKochSnowflake() {
         const y4 = y1 + 2 * dy / 3;
         const x5 = x3 + (x4 - x3) * Math.cos(Math.PI / 3) - (y4 - y3) * Math.sin(Math.PI / 3);
         const y5 = y3 + (x4 - x3) * Math.sin(Math.PI / 3) + (y4 - y3) * Math.cos(Math.PI / 3);
-        
+
         koch(x1, y1, x3, y3, iter - 1);
         koch(x3, y3, x5, y5, iter - 1);
         koch(x5, y5, x4, y4, iter - 1);
         koch(x4, y4, x2, y2, iter - 1);
     }
-    
+
     const centerX = width / 2;
     const centerY = height / 2;
-    const angle = time * 0.1;
-    
+    const angle = time * 0.08;
+
     for (let i = 0; i < 3; i++) {
-        const a1 = angle + i * 2 * Math.PI / 3;
-        const a2 = angle + (i + 1) * 2 * Math.PI / 3;
+        const a1 = angle + (i * 2 * Math.PI) / 3;
+        const a2 = angle + ((i + 1) * 2 * Math.PI) / 3;
         const x1 = centerX + size * Math.cos(a1);
         const y1 = centerY + size * Math.sin(a1);
         const x2 = centerX + size * Math.cos(a2);
@@ -434,16 +532,21 @@ function pixelSortRow(data, y, startX, endX) {
 }
 
 // Glitch effect with datamosh
-function applyGlitch() {
+function applyGlitch(quality) {
+    const now = performance.now();
+    if (now - lastGlitchTime < quality.glitchInterval) {
+        return;
+    }
+    lastGlitchTime = now;
+
     const imageData = ctx.getImageData(0, 0, width, height);
     const data = imageData.data;
     
-    // Row shifts
-    const numSlices = 3 + Math.floor(Math.random() * 3);
+    const numSlices = quality.glitchSlices + Math.floor(Math.random() * 2);
     for (let s = 0; s < numSlices; s++) {
         const sliceY = Math.floor(Math.random() * height);
-        const sliceHeight = Math.floor(10 + Math.random() * 20);
-        const shift = Math.floor(-30 + Math.random() * 60);
+        const sliceHeight = Math.floor(10 + Math.random() * 15);
+        const shift = Math.floor(-25 + Math.random() * 50);
         
         for (let y = sliceY; y < sliceY + sliceHeight && y < height; y++) {
             for (let x = 0; x < width; x++) {
@@ -459,8 +562,7 @@ function applyGlitch() {
         }
     }
     
-    // Noise
-    const noiseDensity = 0.005;
+    const noiseDensity = quality.glitchNoise;
     for (let i = 0; i < data.length; i += 4) {
         if (Math.random() < noiseDensity) {
             const noise = Math.floor(-30 + Math.random() * 60);
@@ -470,8 +572,7 @@ function applyGlitch() {
         }
     }
     
-    // Pixel sorting
-    const numSortRows = 5 + Math.floor(Math.random() * 5);
+    const numSortRows = quality.glitchRows;
     for (let s = 0; s < numSortRows; s++) {
         const y = Math.floor(Math.random() * height);
         const segmentLength = Math.floor(50 + Math.random() * 200);
@@ -479,8 +580,7 @@ function applyGlitch() {
         pixelSortRow(data, y, startX, startX + segmentLength);
     }
     
-    // Datamosh
-    const numMosh = 5;
+    const numMosh = quality.glitchMosh;
     for (let s = 0; s < numMosh; s++) {
         const x = Math.floor(Math.random() * width);
         const y = Math.floor(Math.random() * height);
@@ -507,76 +607,113 @@ function applyGlitch() {
 }
 
 // Animation loop
-function animate() {
-    time += 0.02;
-    
+function animate(timestamp = performance.now()) {
+    const now = timestamp;
+    let delta = now - performanceState.lastTimestamp;
+    if (!Number.isFinite(delta) || delta <= 0) {
+        delta = 16;
+    } else if (delta > 180) {
+        delta = 180;
+    }
+
+    performanceState.lastTimestamp = now;
+    performanceState.fpsSample = performanceState.fpsSample * 0.92 + (1000 / Math.max(delta, 1)) * 0.08;
+    performanceState.framesElapsed++;
+
+    if (performanceState.framesElapsed % 45 === 0) {
+        const fps = performanceState.fpsSample;
+        if (fps < TARGET_FPS - FPS_LOWER_MARGIN && performanceState.presetIndex > 0) {
+            performanceState.presetIndex -= 1;
+        } else if (fps > TARGET_FPS + FPS_UPPER_MARGIN && performanceState.presetIndex < PERFORMANCE_PRESETS.length - 1) {
+            performanceState.presetIndex += 1;
+        }
+    }
+
+    if (document.hidden) {
+        requestAnimationFrame(animate);
+        return;
+    }
+
+    const quality = getQuality();
+    time += delta * 0.00125;
+
     // Audio reactivity
     let audioLevel = 0;
     if (audioInitialized) {
         analyser.getByteFrequencyData(dataArray);
         audioLevel = dataArray.reduce((a, b) => a + b) / dataArray.length / 255;
     }
-    
+
     ctx.fillStyle = `rgba(0, 0, 0, ${FADE_OPACITY})`;
     ctx.fillRect(0, 0, width, height);
-    
-    // Flash modulated by audio
+
     if (Math.sin(time * PULSE_FREQ * Math.PI * 2) > FLASH_THRESHOLD - audioLevel * 0.2) {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
         ctx.fillRect(0, 0, width, height);
     }
-    
+
     switch (currentPattern) {
-        case 0:
-            drawDataStream();
+        case 0: {
+            drawDataStream(quality);
             break;
-        case 1:
-            drawDataField();
+        }
+        case 1: {
+            drawDataField(quality);
             break;
-        case 2:
-            const count = 3 + Math.floor(mouseY * 3);
+        }
+        case 2: {
+            const baseCount = quality.name === 'high' ? 4 : 3;
+            const count = baseCount + Math.floor(mouseY * 2);
+            const segments = Math.max(10, Math.floor(12 + mouseX * 10));
+            const depth = Math.min(9, quality.spiralDepth + 4);
             for (let i = 0; i < count; i++) {
-                const x = width / 2 + Math.sin(time * TEMPO + i) * width * 0.2;
-                const y = height / 2 + Math.cos(time * TEMPO + i) * height * 0.2;
-                drawDataPath(x, y, 16 + Math.floor(mouseX * 12), 8, time * TEMPO / 2);
+                const x = width / 2 + Math.sin(time * TEMPO + i) * width * 0.18;
+                const y = height / 2 + Math.cos(time * TEMPO + i) * height * 0.18;
+                drawDataPath(x, y, segments, depth, time * TEMPO / 2);
             }
             break;
-        case 3:
-            const size = height * 0.45 + mouseY * height * 0.25;
+        }
+        case 3: {
+            const size = height * 0.42 + mouseY * height * 0.2;
             const offsetX = width / 2 - size / 2;
-            const offsetY = height / 2 + size * 0.3;
-            drawBinaryTriangle(offsetX, offsetY, size, 6);
-            
+            const offsetY = height / 2 + size * 0.28;
+            drawBinaryTriangle(offsetX, offsetY, size, quality.spiralDepth + 2);
+
             ctx.save();
             ctx.translate(width / 2, height / 2);
             ctx.rotate(time * TEMPO / 3);
             ctx.translate(-width / 2, -height / 2);
-            drawBinaryTriangle(offsetX, offsetY, size * 0.7, 5);
+            drawBinaryTriangle(offsetX, offsetY, size * 0.68, quality.spiralDepth + 1);
             ctx.restore();
             break;
-        case 4:
-            drawSpiralPattern();
+        }
+        case 4: {
+            drawSpiralPattern(quality);
             break;
-        case 5:
-            drawMandelbrot();
+        }
+        case 5: {
+            drawMandelbrot(quality);
             break;
-        case 6:
-            drawDragonCurve();
+        }
+        case 6: {
+            drawDragonCurve(quality);
             break;
-        case 7:
-            drawBarnsleyFern();
+        }
+        case 7: {
+            drawBarnsleyFern(quality);
             break;
-        case 8:
-            drawKochSnowflake();
+        }
+        case 8: {
+            drawKochSnowflake(quality);
             break;
+        }
     }
-    
-    // Glitch modulated by audio
-    if (Math.sin(time * GLITCH_FREQ * Math.PI * 2) > 0.95 - audioLevel * 0.1) {
-        applyGlitch();
+
+    if (quality.name !== 'low' && Math.sin(time * GLITCH_FREQ * Math.PI * 2) > 0.95 - audioLevel * 0.1) {
+        applyGlitch(quality);
     }
-    
+
     requestAnimationFrame(animate);
 }
 
-animate();
+requestAnimationFrame(animate);
