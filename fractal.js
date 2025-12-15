@@ -20,7 +20,7 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 // Constants
 const TEMPO = 128 / 60;
 const FADE_OPACITY = 0.03;
-const PULSE_FREQ = TEMPO * 8;
+const PULSE_FREQ = TEMPO * 2;
 const FLASH_THRESHOLD = 0.9;
 const GLITCH_FREQ = TEMPO * 4;
 

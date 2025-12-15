@@ -100,23 +100,30 @@ main {
 }
 
 .about {
+    display: block;
     max-width: 600px;
-    padding: 2rem;
-    /* Glass square bubble effect */
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    padding: 2.5rem 3rem;
+    background: rgba(0, 0, 0, 0.8);
+    border: 3px solid #00ffff;
+    border-radius: 8px;
     box-shadow: 
-        0 0 20px rgba(64, 196, 255, 0.3),
-        inset 0 0 20px rgba(255, 64, 129, 0.1);
+        0 0 20px rgba(0, 255, 255, 0.6),
+        0 0 40px rgba(0, 255, 255, 0.4),
+        0 0 60px rgba(0, 255, 255, 0.2),
+        inset 0 0 20px rgba(0, 255, 255, 0.1);
     text-align: center;
-    /* 3D tilt effect */
-    transform: perspective(800px) rotateY(-2deg);
-    transition: transform 0.3s ease;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .about:hover {
-    transform: perspective(800px) rotateY(0deg) scale(1.02);
+    box-shadow: 
+        0 0 30px rgba(0, 255, 255, 0.8),
+        0 0 50px rgba(0, 255, 255, 0.6),
+        0 0 80px rgba(0, 255, 255, 0.3),
+        inset 0 0 30px rgba(0, 255, 255, 0.15);
+    transform: scale(1.02);
 }
 
 .bio {
@@ -124,16 +131,6 @@ main {
     line-height: 1.6;
     color: #ffd6ff;
     letter-spacing: 0.08rem;
-}
-
-.bio a {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-}
-
-.bio a:hover {
-    color: #ff00ff;
 }
 
 footer {
