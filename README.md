@@ -14,3 +14,13 @@ Check out my other mixes :-
 - https://hearthis.at/beepbrighton/03-prisss/
 
 Live site: https://prisss.com
+
+## Site links (corner meta)
+
+| Label | URL |
+|-------|-----|
+| Active | https://gluerecords.club |
+| Techno (events calendar) | https://prisss.notion.site/events |
+| Electronics (bookings & links) | https://prisss.notion.site/bookings |
+
+Update these in `index.html` if your Notion public pages use different URLs.
