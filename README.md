@@ -6,6 +6,8 @@ My aim in making mixes is to evolve experimental grooves, to give people new and
 
 Check out my other mixes :-
 
+https://www.mixcloud.com/Prisss/
+
 http://soundcloud.com/prisss
 
 https://soundcloud.com/breaking-robots/
