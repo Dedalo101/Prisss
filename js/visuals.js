@@ -246,11 +246,6 @@ frame();
     document.addEventListener('DOMContentLoaded', schedule, { once: true });
   } else schedule();
   function schedule() {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const run = () => boot();
-        (window.requestIdleCallback || (cb => setTimeout(cb, 1)))(run, { timeout: 80 });
-      });
-    });
+    requestAnimationFrame(() => requestAnimationFrame(boot));
   }
 })();
