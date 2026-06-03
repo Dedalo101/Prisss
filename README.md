@@ -25,3 +25,9 @@ Live site: https://prisss.com
 | Bookings email | bookings@prisss.com |
 
 Update these in `index.html` if your Notion public pages use different URLs.
+
+## RA events widget
+
+Collapsible footer on the homepage — lazy-loads when opened:
+
+`https://ra.co/promoters/188173/widget/events?theme=dark`
