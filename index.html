@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Prisss — Selector. Live sets. Performer. Patterns inside groove.">
+<meta name="description" content="Prisss — Brighton, UK. Live mix recordings, experimental grooves and soundscapes. SoundCloud and Hearthis.at.">
 <title>Prisss</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,7 +127,9 @@ canvas { position:fixed; inset:0; z-index:0; display:block; }
 }
 
 /* ── Platform links ─────────────────────────────────────────────── */
-.links { display:flex; flex-direction:column; gap:20px; pointer-events:all; }
+.links { display:flex; flex-direction:column; gap:14px; pointer-events:all; max-height:42vh; overflow-y:auto; scrollbar-width:thin; }
+.links::-webkit-scrollbar { width:4px; }
+.links::-webkit-scrollbar-thumb { background:var(--warm-faint); border-radius:2px; }
 .link  { text-decoration:none; display:flex; flex-direction:column; gap:4px;
          position:relative; padding-bottom:9px; }
 .link::after {
@@ -227,11 +229,13 @@ canvas { position:fixed; inset:0; z-index:0; display:block; }
 <div class="shell">
   <div class="corner-tl meta">
     <span><span class="pulse"></span>Active</span><br>
-    Techno · Electronics<br>
-    Barcelona — Brighton
+    Brighton, United Kingdom<br>
+    Live recordings · (nearly) no edits
   </div>
   <div class="corner-tr meta">
-    Selector<br>Live Sets<br>Performer
+    Experimental grooves<br>
+    New soundscapes<br>
+    Subliminal ear worms :-)
   </div>
 
   <div class="center">
@@ -242,20 +246,28 @@ canvas { position:fixed; inset:0; z-index:0; display:block; }
   </div>
 
   <div class="corner-bl">
-    <nav class="links" aria-label="Platforms">
-      <a href="https://hearthis.at/prisss/" target="_blank" rel="noopener noreferrer" class="link">
-        <span class="l-plat">Hearthis.at</span>
-        <span class="l-name">Listen</span>
+    <nav class="links" aria-label="Mixes and platforms">
+      <a href="https://soundcloud.com/prisss" target="_blank" rel="noopener noreferrer" class="link">
+        <span class="l-plat">SoundCloud</span>
+        <span class="l-name">Prisss</span>
       </a>
-      <a href="https://mixcloud.com/prisss" target="_blank" rel="noopener noreferrer" class="link">
-        <span class="l-plat">Mixcloud</span>
-        <span class="l-name">Mixes</span>
+      <a href="https://soundcloud.com/breaking-robots/" target="_blank" rel="noopener noreferrer" class="link">
+        <span class="l-plat">SoundCloud</span>
+        <span class="l-name">Breaking Robots</span>
+      </a>
+      <a href="https://hearthis.at/beepbrighton/07-priss-and-bnboi/" target="_blank" rel="noopener noreferrer" class="link">
+        <span class="l-plat">Hearthis.at</span>
+        <span class="l-name">Priss &amp; BnBoi</span>
+      </a>
+      <a href="https://hearthis.at/beepbrighton/03-prisss/" target="_blank" rel="noopener noreferrer" class="link">
+        <span class="l-plat">Hearthis.at</span>
+        <span class="l-name">Prisss · Beep Brighton</span>
       </a>
     </nav>
   </div>
   <div class="corner-br meta">
-    <span style="color:var(--warm-faint)">Move to interact</span><br>
-    <span class="meta-foot" style="color:var(--warm-faint)">© 2025 Prisss</span>
+    <span style="color:var(--warm-faint)">Check out my other mixes :-)</span><br>
+    <span class="meta-foot" style="color:var(--warm-faint)">© 2026 Prisss</span>
   </div>
 </div>
 
