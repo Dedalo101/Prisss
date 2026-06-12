@@ -187,30 +187,30 @@ canvas {
 
 @media (max-width: 768px) {
   .shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto auto;
-    padding: clamp(16px, 4vh, 32px) clamp(16px, 4vw, 24px);
+    display: block;
+    padding: 0;
   }
 
   .center {
-    grid-column: 1;
-    grid-row: 1;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11;
+    width: max-content;
+    text-align: center;
   }
 
-  .corner-bl {
-    grid-column: 1;
-    grid-row: 2;
-    justify-self: start;
-  }
-
+  .corner-bl,
   .corner-br {
-    grid-column: 1;
-    grid-row: 3;
-    justify-self: end;
+    position: fixed;
+    bottom: clamp(20px, 5vh, 36px);
+    z-index: 12;
+  }
+
+  .corner-bl { left: clamp(16px, 4vw, 24px); }
+  .corner-br {
+    right: clamp(16px, 4vw, 24px);
     text-align: right;
   }
 
