@@ -32,6 +32,7 @@
   --needle:     #ede4d0;
   --copper:     #c97a3a;
   --font-hero:  'Blade Runner Movie', ui-monospace, monospace;
+  --font-ui:    ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Consolas, monospace;
 }
 
 html {
@@ -46,7 +47,7 @@ html, body {
 }
 
 body {
-  font-family: var(--font-hero);
+  font-family: var(--font-ui);
   line-height: 1.5;
 }
 
@@ -55,14 +56,14 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse 75% 75% at 50% 20%,
-    transparent 20%, rgba(6,5,10,0.85) 100%);
+  background: radial-gradient(ellipse 75% 75% at 50% 10%,
+    transparent 20%, rgba(6,5,10,0.88) 100%);
 }
 
 .page {
   position: relative;
   z-index: 1;
-  max-width: 42rem;
+  max-width: 44rem;
   margin: 0 auto;
   padding: clamp(28px, 6vh, 56px) clamp(20px, 5vw, 40px) clamp(48px, 8vh, 80px);
 }
@@ -70,6 +71,7 @@ body {
 .back {
   display: inline-block;
   margin-bottom: clamp(24px, 5vh, 40px);
+  font-family: var(--font-hero);
   font-size: clamp(11px, 2.8vw, 14px);
   letter-spacing: .12em;
   color: var(--warm-dim);
@@ -80,6 +82,7 @@ body {
 .back:hover { color: var(--needle); }
 
 .eyebrow {
+  font-family: var(--font-hero);
   font-size: clamp(10px, 2.4vw, 12px);
   letter-spacing: .18em;
   color: var(--copper);
@@ -87,6 +90,7 @@ body {
 }
 
 .title {
+  font-family: var(--font-hero);
   font-size: clamp(28px, 7vw, 48px);
   font-weight: normal;
   letter-spacing: .08em;
@@ -95,19 +99,26 @@ body {
 }
 
 .lead {
-  font-size: clamp(12px, 3vw, 15px);
-  letter-spacing: .06em;
+  font-size: clamp(12px, 3vw, 14px);
+  letter-spacing: .04em;
   color: var(--warm-dim);
   margin-bottom: clamp(28px, 5vh, 40px);
   max-width: 36rem;
+  line-height: 1.6;
 }
 
 .form-status {
-  padding: 16px 18px;
+  padding: 14px 16px;
   border: 1px solid var(--warm-faint);
-  margin-bottom: 24px;
-  font-size: clamp(12px, 3vw, 14px);
-  letter-spacing: .06em;
+  margin-bottom: 1.5rem;
+  background: rgba(6,5,10,0.55);
+  font-size: 13px;
+  letter-spacing: .03em;
+  line-height: 1.55;
+}
+
+.form-status p + p {
+  margin-top: .65rem;
 }
 
 .form-status--success {
@@ -124,15 +135,28 @@ body {
   color: var(--needle);
 }
 
+.booking-card {
+  border: 1px solid var(--warm-faint);
+  padding: clamp(16px, 4vw, 22px);
+  background: rgba(6,5,10,0.55);
+}
+
 .booking-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
+}
+
+.form-section + .form-section {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--warm-faint);
 }
 
 .section-title {
-  margin-top: .5rem;
+  margin-bottom: 1rem;
+  font-family: var(--font-hero);
   font-size: clamp(10px, 2.4vw, 12px);
+  font-weight: normal;
   letter-spacing: .14em;
   color: var(--groove);
 }
@@ -140,12 +164,13 @@ body {
 .field {
   display: flex;
   flex-direction: column;
-  gap: .45rem;
+  gap: .4rem;
 }
 
 .field label {
-  font-size: clamp(10px, 2.4vw, 12px);
-  letter-spacing: .1em;
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
   color: var(--warm-dim);
 }
 
@@ -153,23 +178,36 @@ body {
 .field select,
 .field textarea {
   width: 100%;
-  padding: .7rem .8rem;
+  padding: .65rem .75rem;
   border: 1px solid var(--warm-faint);
-  background: rgba(6,5,10,0.72);
+  border-radius: 0;
+  background: rgba(6,5,10,0.82);
   color: var(--warm);
-  font: inherit;
-  letter-spacing: .04em;
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: .02em;
   line-height: 1.45;
+}
+
+.field select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--warm-dim) 50%),
+    linear-gradient(135deg, var(--warm-dim) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% + 2px),
+    calc(100% - 12px) calc(50% + 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 2rem;
 }
 
 .field textarea {
   resize: vertical;
-  min-height: 7rem;
+  min-height: 6.5rem;
 }
 
 .field input::placeholder,
 .field textarea::placeholder {
-  color: rgba(107,96,85,0.7);
+  color: rgba(107,96,85,0.65);
 }
 
 .field input:focus,
@@ -182,19 +220,19 @@ body {
 .field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .submit {
   align-self: flex-start;
-  margin-top: .5rem;
-  padding: 14px 24px;
+  margin-top: .25rem;
+  padding: 12px 22px;
   border: 1px solid var(--groove);
   background: transparent;
   color: var(--needle);
-  font-family: inherit;
-  font-size: clamp(12px, 3vw, 14px);
-  letter-spacing: .12em;
+  font-family: var(--font-hero);
+  font-size: clamp(11px, 2.8vw, 13px);
+  letter-spacing: .1em;
   cursor: pointer;
   transition: color .2s, border-color .2s;
 }
@@ -249,116 +287,122 @@ body {
   </div>
 
   <form
-    class="booking-form"
-    id="bookings-form"
-    action="https://formspree.io/f/mjgdazvb"
-    method="POST"
-    data-formspree-ajax
-    data-success-el="bookings-success"
-    data-error-el="bookings-error"
-  >
-    <input type="hidden" name="_subject" value="DJ Booking — Prisss">
+      class="booking-form booking-card"
+      id="bookings-form"
+      action="https://formspree.io/f/mjgdazvb"
+      method="POST"
+      data-formspree-ajax
+      data-success-el="bookings-success"
+      data-error-el="bookings-error"
+    >
+      <input type="hidden" name="_subject" value="DJ Booking — Prisss">
 
-    <h2 class="section-title">Contact</h2>
+      <section class="form-section">
+        <h2 class="section-title">Contact</h2>
 
-    <div class="field-row">
-      <div class="field">
-        <label for="bookings-name">Name</label>
-        <input type="text" id="bookings-name" name="name" required autocomplete="name" placeholder="Your name">
-      </div>
-      <div class="field">
-        <label for="bookings-email">Email</label>
-        <input type="email" id="bookings-email" name="email" required autocomplete="email" placeholder="name@example.com">
-      </div>
-    </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="bookings-name">Name</label>
+            <input type="text" id="bookings-name" name="name" required autocomplete="name" placeholder="Your name">
+          </div>
+          <div class="field">
+            <label for="bookings-email">Email</label>
+            <input type="email" id="bookings-email" name="email" required autocomplete="email" placeholder="name@example.com">
+          </div>
+        </div>
 
-    <div class="field-row">
-      <div class="field">
-        <label for="bookings-org">Organization / promoter</label>
-        <input type="text" id="bookings-org" name="organization" autocomplete="organization" placeholder="Festival, club, agency…">
-      </div>
-      <div class="field">
-        <label for="bookings-phone">Phone (optional)</label>
-        <input type="tel" id="bookings-phone" name="phone" autocomplete="tel" placeholder="+44 …">
-      </div>
-    </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="bookings-org">Organization / promoter</label>
+            <input type="text" id="bookings-org" name="organization" autocomplete="organization" placeholder="Festival, club, agency…">
+          </div>
+          <div class="field">
+            <label for="bookings-phone">Phone (optional)</label>
+            <input type="tel" id="bookings-phone" name="phone" autocomplete="tel" placeholder="+44 …">
+          </div>
+        </div>
+      </section>
 
-    <h2 class="section-title">Event</h2>
+      <section class="form-section">
+        <h2 class="section-title">Event</h2>
 
-    <div class="field">
-      <label for="bookings-type">Event type</label>
-      <select id="bookings-type" name="event_type" required>
-        <option value="">Select…</option>
-        <option value="Festival">Festival</option>
-        <option value="Club / nightclub">Club / nightclub</option>
-        <option value="Private event">Private event</option>
-        <option value="Cultural venue">Cultural venue</option>
-        <option value="Radio / streaming">Radio / streaming</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
+        <div class="field">
+          <label for="bookings-type">Event type</label>
+          <select id="bookings-type" name="event_type" required>
+            <option value="">Select…</option>
+            <option value="Festival">Festival</option>
+            <option value="Club / nightclub">Club / nightclub</option>
+            <option value="Private event">Private event</option>
+            <option value="Cultural venue">Cultural venue</option>
+            <option value="Radio / streaming">Radio / streaming</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
 
-    <div class="field-row">
-      <div class="field">
-        <label for="bookings-venue">Venue / space</label>
-        <input type="text" id="bookings-venue" name="venue" required placeholder="Venue or stage name">
-      </div>
-      <div class="field">
-        <label for="bookings-location">City &amp; country</label>
-        <input type="text" id="bookings-location" name="location" required placeholder="Brighton, UK · Berlin, DE…">
-      </div>
-    </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="bookings-venue">Venue / space</label>
+            <input type="text" id="bookings-venue" name="venue" required placeholder="Venue or stage name">
+          </div>
+          <div class="field">
+            <label for="bookings-location">City &amp; country</label>
+            <input type="text" id="bookings-location" name="location" required placeholder="Brighton, UK · Berlin, DE…">
+          </div>
+        </div>
 
-    <div class="field-row">
-      <div class="field">
-        <label for="bookings-dates">Proposed date(s)</label>
-        <input type="text" id="bookings-dates" name="dates" required placeholder="15 Aug 2026 · flexible weekend…">
-      </div>
-      <div class="field">
-        <label for="bookings-audience">Estimated audience</label>
-        <input type="text" id="bookings-audience" name="audience" placeholder="300 people · 1,500 attendees…">
-      </div>
-    </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="bookings-dates">Proposed date(s)</label>
+            <input type="text" id="bookings-dates" name="dates" required placeholder="15 Aug 2026 · flexible weekend…">
+          </div>
+          <div class="field">
+            <label for="bookings-audience">Estimated audience</label>
+            <input type="text" id="bookings-audience" name="audience" placeholder="300 people · 1,500 attendees…">
+          </div>
+        </div>
+      </section>
 
-    <h2 class="section-title">Production</h2>
+      <section class="form-section">
+        <h2 class="section-title">Production</h2>
 
-    <div class="field-row">
-      <div class="field">
-        <label for="bookings-duration">Set duration</label>
-        <select id="bookings-duration" name="set_duration">
-          <option value="">Select…</option>
-          <option value="1 hour">1 hour</option>
-          <option value="1.5 hours">1.5 hours</option>
-          <option value="2 hours">2 hours</option>
-          <option value="3+ hours">3+ hours</option>
-          <option value="TBC">TBC</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="bookings-budget">Budget (fee + travel)</label>
-        <select id="bookings-budget" name="budget">
-          <option value="">Select…</option>
-          <option value="Check availability">Check availability</option>
-          <option value="Up to £500">Up to £500</option>
-          <option value="£500 – £1,000">£500 – £1,000</option>
-          <option value="£1,000 – £2,500">£1,000 – £2,500</option>
-          <option value="£2,500+">£2,500+</option>
-        </select>
-      </div>
-    </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="bookings-duration">Set duration</label>
+            <select id="bookings-duration" name="set_duration">
+              <option value="">Select…</option>
+              <option value="1 hour">1 hour</option>
+              <option value="1.5 hours">1.5 hours</option>
+              <option value="2 hours">2 hours</option>
+              <option value="3+ hours">3+ hours</option>
+              <option value="TBC">TBC</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bookings-budget">Budget (fee + travel)</label>
+            <select id="bookings-budget" name="budget">
+              <option value="">Select…</option>
+              <option value="Check availability">Check availability</option>
+              <option value="Up to £500">Up to £500</option>
+              <option value="£500 – £1,000">£500 – £1,000</option>
+              <option value="£1,000 – £2,500">£1,000 – £2,500</option>
+              <option value="£2,500+">£2,500+</option>
+            </select>
+          </div>
+        </div>
 
-    <div class="field">
-      <label for="bookings-rider">Technical rider &amp; equipment</label>
-      <textarea id="bookings-rider" name="technical_rider" rows="5" placeholder="Mixer (model), monitors, turntables, CDJs, soundcheck time, venue restrictions…"></textarea>
-    </div>
+        <div class="field">
+          <label for="bookings-rider">Technical rider &amp; equipment</label>
+          <textarea id="bookings-rider" name="technical_rider" rows="5" placeholder="Mixer (model), monitors, turntables, CDJs, soundcheck time, venue restrictions…"></textarea>
+        </div>
 
-    <div class="field">
-      <label for="bookings-notes">Additional notes</label>
-      <textarea id="bookings-notes" name="notes" rows="4" placeholder="Line-up, desired style, references, accommodation, visa needs, other artists on bill…"></textarea>
-    </div>
+        <div class="field">
+          <label for="bookings-notes">Additional notes</label>
+          <textarea id="bookings-notes" name="notes" rows="4" placeholder="Line-up, desired style, references, accommodation, visa needs, other artists on bill…"></textarea>
+        </div>
+      </section>
 
-    <button type="submit" class="submit" data-submitting-text="Sending…">Send booking request</button>
-  </form>
+      <button type="submit" class="submit" data-submitting-text="Sending…">Send booking request</button>
+    </form>
 </main>
 
 <audio
