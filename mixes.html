@@ -130,9 +130,20 @@ body {
   overflow: hidden;
 }
 
+.mix-frame-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 104px;
+  height: 100%;
+  background: linear-gradient(to right, transparent 0%, rgba(6, 5, 10, 0.92) 42%, var(--bg) 68%);
+  pointer-events: auto;
+}
+
 .mix-frame {
   display: block;
-  width: calc(100% + 88px);
+  width: calc(100% + 104px);
   max-width: none;
   height: 60px;
   border: 0;
