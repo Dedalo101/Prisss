@@ -12,13 +12,21 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#06050a">
 <meta name="msapplication-TileColor" content="#06050a">
+<link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="font" type="font/ttf" href="https://fonts.gstatic.com/s/cormorantgaramond/v21/co3umX5slCNuHLi8bLeY9MK7whWMhyjypVO7abI26QOD_qE6GnM.ttf" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Share+Tech+Mono&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Share+Tech+Mono&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"></noscript>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+@font-face {
+  font-family: 'Blade Runner Movie';
+  src: url('/fonts/blade-runner-movie.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --bg:         #06050a;
@@ -28,7 +36,7 @@
   --groove:     #c4aa7e;
   --needle:     #ede4d0;
   --copper:     #c97a3a;
-  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-hero:  'Blade Runner Movie', 'Share Tech Mono', ui-monospace, monospace;
   --font-mono:  'Share Tech Mono', ui-monospace, 'Cascadia Mono', monospace;
 }
 
@@ -141,11 +149,15 @@ canvas {
 .nav-link:hover::after { width:100%; }
 
 .title {
-  font-family:var(--font-serif); font-weight:300;
-  font-size: clamp(72px, 18vw, 220px);
-  line-height:.88; letter-spacing:-.02em;
-  color:var(--warm); user-select:none;
-  position:relative; display:inline-block;
+  font-family: var(--font-hero);
+  font-weight: normal;
+  font-size: clamp(48px, 12vw, 140px);
+  line-height: .95;
+  letter-spacing: .06em;
+  color: var(--warm);
+  user-select: none;
+  position: relative;
+  display: inline-block;
   contain: layout style;
 }
 .title::before, .title::after {
