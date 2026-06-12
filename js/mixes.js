@@ -3,7 +3,10 @@
 
   function embedSrc(showUrl) {
     var feed = encodeURIComponent(new URL(showUrl).pathname);
-    return 'https://www.mixcloud.com/widget/iframe/?hide_cover=1&mini=1&feed=' + feed;
+    return (
+      'https://player-widget.mixcloud.com/?hide_cover=1&hide_tracklist=1&hide_artwork=1&mini=1&feed=' +
+      feed
+    );
   }
 
   function renderShows() {
@@ -20,6 +23,9 @@
       title.className = 'mix-title';
       title.textContent = show.title;
 
+      var wrap = document.createElement('div');
+      wrap.className = 'mix-frame-wrap';
+
       var iframe = document.createElement('iframe');
       iframe.className = 'mix-frame';
       iframe.loading = 'lazy';
@@ -27,8 +33,10 @@
       iframe.src = embedSrc(show.url);
       iframe.title = show.title;
 
+      wrap.appendChild(iframe);
+
       card.appendChild(title);
-      card.appendChild(iframe);
+      card.appendChild(wrap);
       frag.appendChild(card);
     });
 
