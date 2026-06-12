@@ -228,6 +228,7 @@ function drawSpiralGhost(t) {
 // ── Render ────────────────────────────────────────────────────────
 let t = 0;
 function frame() {
+  if (!canvas.isConnected) return;
   t += 0.009;
   ctx.fillStyle = 'rgba(6,5,10,0.2)';
   ctx.fillRect(0, 0, W, H);
