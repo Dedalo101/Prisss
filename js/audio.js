@@ -1,47 +1,31 @@
 (function () {
   'use strict';
 
-  var iframe = document.getElementById('sc-player');
-  if (!iframe) return;
+  var audio = document.getElementById('site-audio');
+  if (!audio) return;
 
-  var TRACK =
-    'https://soundcloud.com/barefaith/end-of-part-iii-intermedium-i';
+  var started = false;
 
-  function boot() {
-    if (typeof SC === 'undefined' || !SC.Widget) {
-      setTimeout(boot, 50);
-      return;
+  function start() {
+    if (started) return;
+    started = true;
+    var playAttempt = audio.play();
+    if (playAttempt && typeof playAttempt.catch === 'function') {
+      playAttempt.catch(function () {
+        started = false;
+      });
     }
-
-    var widget = SC.Widget(iframe);
-    var playing = false;
-
-    function start() {
-      if (playing) return;
-      widget.play();
-      playing = true;
-    }
-
-    widget.bind(SC.Widget.Events.READY, start);
-    widget.bind(SC.Widget.Events.PLAY, function () {
-      playing = true;
-    });
-
-    widget.bind(SC.Widget.Events.ERROR, function () {
-      widget.load(TRACK, { auto_play: true, callback: start });
-    });
-
-    function unlock() {
-      start();
-    }
-
-    document.addEventListener('pointerdown', unlock, { once: true, passive: true });
-    document.addEventListener('keydown', unlock, { once: true });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
+  audio.addEventListener('playing', function () {
+    started = true;
+  });
+
+  audio.addEventListener('canplaythrough', start, { once: true });
+  audio.addEventListener('loadeddata', start, { once: true });
+
+  document.addEventListener('pointerdown', start, { once: true, passive: true });
+  document.addEventListener('keydown', start, { once: true });
+
+  start();
 })();
