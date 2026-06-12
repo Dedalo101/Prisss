@@ -185,6 +185,47 @@ canvas {
   92% { clip-path:polygon(0 0,0 0,0 0,0 0); }
 }
 
+@media (max-width: 768px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto auto;
+    padding: clamp(16px, 4vh, 32px) clamp(16px, 4vw, 24px);
+  }
+
+  .center {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .corner-bl {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .corner-br {
+    grid-column: 1;
+    grid-row: 3;
+    justify-self: end;
+    text-align: right;
+  }
+
+  .title {
+    letter-spacing: .04em;
+    margin-right: -.04em;
+  }
+
+  .nav-link {
+    white-space: nowrap;
+    font-size: clamp(11px, 3.2vw, 16px);
+    letter-spacing: .08em;
+  }
+}
+
 @media (hover: none) and (pointer: coarse) {
   html, body { cursor: auto; }
   .cur-dot, .cur-ring { display: none !important; }
@@ -211,7 +252,7 @@ canvas {
   </nav>
 
   <nav class="corner-br nav" aria-label="Links">
-    <a href="https://hearthis.at/prisss/" target="_blank" rel="noopener noreferrer" class="nav-link">dj sets</a>
+    <a href="/dj-sets.html" class="nav-link">dj&nbsp;sets</a>
     <a href="http://gluerecords.club" target="_blank" rel="noopener noreferrer" class="nav-link">label</a>
   </nav>
 </div>
