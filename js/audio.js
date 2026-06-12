@@ -7,6 +7,7 @@
   var STORAGE_KEY = 'prisss-audio';
   var started = false;
   var restored = false;
+  var pausedByEmbed = false;
 
   function readState() {
     try {
@@ -39,7 +40,15 @@
     if (state.playing) start();
   }
 
+  function pauseForEmbed() {
+    pausedByEmbed = true;
+    started = true;
+    audio.pause();
+    writeState();
+  }
+
   function start() {
+    if (pausedByEmbed) return;
     if (started && !audio.paused) return;
     started = true;
     var playAttempt = audio.play();
@@ -70,6 +79,10 @@
   document.addEventListener('keydown', start, { once: true });
 
   var state = readState();
+  window.PRISSS_AUDIO = {
+    pauseForEmbed: pauseForEmbed,
+  };
+
   if (state && state.unlocked) {
     start();
   } else {

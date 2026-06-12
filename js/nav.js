@@ -19,8 +19,8 @@
   function pageScripts(path) {
     if (path === '/' || path === '/index.html') return ['js/visuals.js'];
     if (path === '/bookings.html') return ['js/formspree-form.js'];
-    if (path === '/mixes.html') return ['js/mixes-data.js', 'js/mixes.js'];
-    if (path === '/dj-sets.html') return ['js/dj-sets-data.js', 'js/dj-sets.js'];
+    if (path === '/mixes.html') return ['js/mixes-data.js', 'js/mixes.js', 'js/embed-audio.js'];
+    if (path === '/dj-sets.html') return ['js/dj-sets-data.js', 'js/dj-sets.js', 'js/embed-audio.js'];
     return [];
   }
 
