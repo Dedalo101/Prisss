@@ -226,6 +226,21 @@ canvas {
   }
 }
 
+.sc-audio {
+  position: fixed;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+.sc-audio iframe {
+  width: 1px;
+  height: 1px;
+  border: 0;
+}
+
 @media (hover: none) and (pointer: coarse) {
   html, body { cursor: auto; }
   .cur-dot, .cur-ring { display: none !important; }
@@ -257,6 +272,18 @@ canvas {
   </nav>
 </div>
 
+<div class="sc-audio" aria-hidden="true">
+  <iframe
+    id="sc-player"
+    title=""
+    tabindex="-1"
+    allow="autoplay"
+    src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fbarefaith%2Fend-of-part-iii-intermedium-i&amp;auto_play=true&amp;color=%2306050a&amp;buying=false&amp;sharing=false&amp;download=false&amp;show_artwork=false&amp;show_playcount=false&amp;show_user=false&amp;show_comments=false&amp;show_reposts=false&amp;hide_related=true&amp;visual=false"
+  ></iframe>
+</div>
+
+<script src="https://w.soundcloud.com/player/api.js"></script>
+<script src="js/audio.js" defer></script>
 <script src="js/visuals.js" defer></script>
 </body>
 </html>
