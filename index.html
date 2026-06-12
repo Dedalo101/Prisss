@@ -13,10 +13,6 @@
 <meta name="theme-color" content="#06050a">
 <meta name="msapplication-TileColor" content="#06050a">
 <link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"></noscript>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
@@ -36,8 +32,7 @@
   --groove:     #c4aa7e;
   --needle:     #ede4d0;
   --copper:     #c97a3a;
-  --font-hero:  'Blade Runner Movie', 'Share Tech Mono', ui-monospace, monospace;
-  --font-mono:  'Share Tech Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --font-hero:  'Blade Runner Movie', ui-monospace, monospace;
 }
 
 html {
@@ -127,10 +122,10 @@ canvas {
 .corner-br .nav { align-items:flex-end; }
 
 .nav-link {
-  font-family: var(--font-mono);
-  font-size: clamp(10px, 2.2vw, 12px);
-  letter-spacing: .22em;
-  text-transform: lowercase;
+  font-family: var(--font-hero);
+  font-weight: normal;
+  font-size: clamp(14px, 2.8vw, 22px);
+  letter-spacing: .1em;
   color: var(--warm-dim);
   text-decoration: none;
   position: relative;
