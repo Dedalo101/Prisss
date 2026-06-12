@@ -1,7 +1,4 @@
-var PRISSS_DJ_SETS = [  { title: "Heavy Waves Deep Currents", id: 9699229 },
-  { title: "A wild BEEP event", id: 9147558 },
-  { title: "07 Prisss and BnBoi", id: 238521 },
-  { title: "03 prisss (dj set)", id: 212318 },
+var PRISSS_DJ_SETS = [
   { title: "Spring 2026 pt1", id: 14385351 },
   { title: "Terahurtz After Party 11Apr26", id: 14153574 },
   { title: "Spring 2025 - pt2", id: 13392382 },
@@ -15,4 +12,8 @@ var PRISSS_DJ_SETS = [  { title: "Heavy Waves Deep Currents", id: 9699229 },
   { title: "Sustainable Fashion Week Runway Show 1 October 2023", id: 10214904 },
   { title: "Ledward Centre Downbeat Chill Out Sundays 24 September 2023 - pt2", id: 10177549 },
   { title: "Ledward Centre Downbeat Chill Out Sundays 24 September 2023 - pt1", id: 10177509 },
+  { title: "Heavy Waves Deep Currents", id: 9699229 },
+  { title: "A wild BEEP event", id: 9147558 },
+  { title: "07 Prisss and BnBoi", id: 238521 },
+  { title: "03 prisss (dj set)", id: 212318 },
 ];
