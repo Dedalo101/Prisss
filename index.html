@@ -143,6 +143,28 @@ canvas {
 .nav-link:hover { color: var(--needle); }
 .nav-link:hover::after { width:100%; }
 
+.title-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.title-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -12% -8%;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(237, 228, 208, 0.22) 0%,
+    rgba(201, 122, 58, 0.08) 42%,
+    transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.title-wrap.is-flashing::before {
+  animation: title-bloom 0.18s steps(3) 1;
+}
+
 .title {
   font-family: var(--font-hero);
   font-weight: normal;
@@ -154,7 +176,9 @@ canvas {
   position: relative;
   display: inline-block;
   contain: layout style;
+  animation: title-idle 4.2s infinite step-end;
 }
+
 .title::before, .title::after {
   content:attr(data-text);
   position:absolute; inset:0; pointer-events:none;
@@ -163,26 +187,96 @@ canvas {
   letter-spacing:inherit;
   line-height:inherit;
 }
+
 .title::before {
   color:var(--copper);
-  animation: g1 7s infinite step-start;
+  animation: g1 4.5s infinite step-start;
   clip-path:polygon(0 0,0 0,0 0,0 0);
 }
+
 .title::after {
-  color:var(--warm-dim);
-  animation: g2 7s infinite step-start;
+  color:var(--needle);
+  animation: g2 3.8s infinite step-start;
   clip-path:polygon(0 0,0 0,0 0,0 0);
+  mix-blend-mode: screen;
+  opacity: .55;
 }
+
+.title.is-glitching {
+  animation: title-hit 0.22s steps(5) 1;
+}
+
+.title.is-glitching::before {
+  animation: g1-burst 0.24s steps(6) 1;
+}
+
+.title.is-glitching::after {
+  animation: g2-burst 0.24s steps(5) 1;
+}
+
+@keyframes title-idle {
+  0%, 94%, 100% { opacity: 1; transform: translate(0); filter: none; }
+  95% { opacity: .78; transform: translate(-1px, 0); filter: brightness(1.35); }
+  96% { opacity: 1; transform: translate(2px, -1px); text-shadow: -3px 0 rgba(201,122,58,.55), 3px 0 rgba(237,228,208,.35); }
+  97% { opacity: .9; transform: translate(-2px, 1px); }
+  98% { opacity: 1; transform: translate(0); text-shadow: none; }
+}
+
+@keyframes title-hit {
+  0%   { transform: translate(0); filter: brightness(1); }
+  20%  { transform: translate(-3px, 1px) skewX(-2deg); filter: brightness(1.65); color: var(--needle); }
+  40%  { transform: translate(4px, -2px) skewX(1.5deg); filter: brightness(1.2); }
+  60%  { transform: translate(-2px, 0); filter: brightness(1.9); color: var(--warm); }
+  80%  { transform: translate(2px, 1px); filter: brightness(1.1); }
+  100% { transform: translate(0); filter: brightness(1); }
+}
+
+@keyframes title-bloom {
+  0%, 100% { opacity: 0; }
+  35%      { opacity: .95; }
+  70%      { opacity: .35; }
+}
+
 @keyframes g1 {
-  0%,88%,100% { clip-path:polygon(0 0,0 0,0 0,0 0); transform:translate(0); }
-  89% { clip-path:polygon(0 20%,100% 20%,100% 42%,0 42%); transform:translate(-4px,1px); opacity:.85; }
-  90% { clip-path:polygon(0 58%,100% 58%,100% 72%,0 72%); transform:translate(3px,0);  opacity:.6; }
-  91% { clip-path:polygon(0 0,0 0,0 0,0 0); }
+  0%, 68%, 100% { clip-path:polygon(0 0,0 0,0 0,0 0); transform:translate(0); opacity:0; }
+  69% { clip-path:polygon(0 6%,100% 6%,100% 16%,0 16%); transform:translate(-7px,2px); opacity:.95; }
+  70% { clip-path:polygon(0 28%,100% 28%,100% 40%,0 40%); transform:translate(5px,-2px); opacity:.75; }
+  71% { clip-path:polygon(0 52%,100% 52%,100% 64%,0 64%); transform:translate(-4px,1px); opacity:.9; }
+  72% { clip-path:polygon(0 78%,100% 78%,100% 88%,0 88%); transform:translate(6px,0); opacity:.65; }
+  73% { clip-path:polygon(0 0,0 0,0 0,0 0); opacity:0; }
+  84% { clip-path:polygon(0 18%,100% 18%,100% 30%,0 30%); transform:translate(-5px,-1px); opacity:.85; }
+  85% { clip-path:polygon(0 44%,100% 44%,100% 56%,0 56%); transform:translate(4px,2px); opacity:.7; }
+  86% { clip-path:polygon(0 0,0 0,0 0,0 0); opacity:0; }
+  92% { clip-path:polygon(0 62%,100% 62%,100% 74%,0 74%); transform:translate(-6px,1px); opacity:.8; }
+  93% { clip-path:polygon(0 0,0 0,0 0,0 0); opacity:0; }
 }
+
 @keyframes g2 {
-  0%,90%,100% { clip-path:polygon(0 0,0 0,0 0,0 0); transform:translate(0); }
-  91% { clip-path:polygon(0 35%,100% 35%,100% 55%,0 55%); transform:translate(5px,-1px); opacity:.45; }
-  92% { clip-path:polygon(0 0,0 0,0 0,0 0); }
+  0%, 72%, 100% { clip-path:polygon(0 0,0 0,0 0,0 0); transform:translate(0); opacity:0; }
+  73% { clip-path:polygon(0 12%,100% 12%,100% 24%,0 24%); transform:translate(6px,-1px); opacity:.7; }
+  74% { clip-path:polygon(0 36%,100% 36%,100% 48%,0 48%); transform:translate(-5px,2px); opacity:.55; }
+  75% { clip-path:polygon(0 66%,100% 66%,100% 78%,0 78%); transform:translate(4px,0); opacity:.65; }
+  76% { clip-path:polygon(0 0,0 0,0 0,0 0); opacity:0; }
+  88% { clip-path:polygon(0 22%,100% 22%,100% 34%,0 34%); transform:translate(-4px,1px); opacity:.6; }
+  89% { clip-path:polygon(0 58%,100% 58%,100% 70%,0 70%); transform:translate(5px,-2px); opacity:.5; }
+  90% { clip-path:polygon(0 0,0 0,0 0,0 0); opacity:0; }
+}
+
+@keyframes g1-burst {
+  0%   { clip-path:polygon(0 0,0 0,0 0,0 0); transform:translate(0); opacity:0; }
+  15%  { clip-path:polygon(0 10%,100% 10%,100% 22%,0 22%); transform:translate(-9px,2px); opacity:1; }
+  35%  { clip-path:polygon(0 38%,100% 38%,100% 50%,0 50%); transform:translate(7px,-3px); opacity:.85; }
+  55%  { clip-path:polygon(0 64%,100% 64%,100% 76%,0 76%); transform:translate(-6px,1px); opacity:.95; }
+  75%  { clip-path:polygon(0 82%,100% 82%,100% 94%,0 94%); transform:translate(5px,0); opacity:.7; }
+  100% { clip-path:polygon(0 0,0 0,0 0,0 0); opacity:0; }
+}
+
+@keyframes g2-burst {
+  0%   { clip-path:polygon(0 0,0 0,0 0,0 0); transform:translate(0); opacity:0; }
+  20%  { clip-path:polygon(0 16%,100% 16%,100% 28%,0 28%); transform:translate(8px,-2px); opacity:.75; }
+  45%  { clip-path:polygon(0 42%,100% 42%,100% 54%,0 54%); transform:translate(-7px,2px); opacity:.65; }
+  70%  { clip-path:polygon(0 70%,100% 70%,100% 82%,0 82%); transform:translate(6px,-1px); opacity:.8; }
+  100% { clip-path:polygon(0 0,0 0,0 0,0 0); opacity:0; }
 }
 
 @media (max-width: 768px) {
@@ -253,7 +347,9 @@ canvas {
 
 <div class="shell">
   <div class="center">
-    <h1 class="title" data-text="Dj Prisss" id="lcp-title">Dj Prisss</h1>
+    <div class="title-wrap" id="title-wrap">
+      <h1 class="title" data-text="Dj Prisss" id="lcp-title">Dj Prisss</h1>
+    </div>
   </div>
 
   <nav class="corner-bl nav" aria-label="Links">

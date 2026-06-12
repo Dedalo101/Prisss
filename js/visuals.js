@@ -19,10 +19,56 @@ document.querySelectorAll('a').forEach(a => {
   a.addEventListener('mouseenter', () => cRing.classList.add('big'));
   a.addEventListener('mouseleave', () => cRing.classList.remove('big'));
 });
+const titleWrap = document.getElementById('title-wrap');
+const heroTitle = document.getElementById('lcp-title');
+let titleRect = null;
+let overTitle = false;
+let titleFlashReady = 0;
+
+function updateTitleRect() {
+  if (!titleWrap) return;
+  titleRect = titleWrap.getBoundingClientRect();
+}
+
+function triggerTitleGlitch() {
+  if (!heroTitle || !titleWrap || performance.now() < titleFlashReady) return;
+  titleFlashReady = performance.now() + 320 + Math.random() * 900;
+  titleWrap.classList.remove('is-flashing');
+  heroTitle.classList.remove('is-glitching');
+  void titleWrap.offsetWidth;
+  titleWrap.classList.add('is-flashing');
+  heroTitle.classList.add('is-glitching');
+  window.setTimeout(() => titleWrap.classList.remove('is-flashing'), 180);
+  window.setTimeout(() => heroTitle.classList.remove('is-glitching'), 240);
+}
+
+function checkTitleHover(x, y) {
+  if (!titleRect) return;
+  const pad = 28;
+  const hit =
+    x >= titleRect.left - pad &&
+    x <= titleRect.right + pad &&
+    y >= titleRect.top - pad &&
+    y <= titleRect.bottom + pad;
+
+  if (hit && !overTitle) {
+    overTitle = true;
+    triggerTitleGlitch();
+  } else if (!hit) {
+    overTitle = false;
+  } else if (hit && Math.random() < 0.012) {
+    triggerTitleGlitch();
+  }
+}
+
+updateTitleRect();
+window.addEventListener('resize', updateTitleRect);
+
 (function animCursor() {
   rx += (mx - rx) * 0.11; ry += (my - ry) * 0.11;
   cDot.style.left  = mx + 'px'; cDot.style.top  = my + 'px';
   cRing.style.left = rx + 'px'; cRing.style.top = ry + 'px';
+  checkTitleHover(mx, my);
   requestAnimationFrame(animCursor);
 })();
 
