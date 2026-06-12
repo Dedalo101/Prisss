@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Prisss mixes — live recordings and sessions.">
+<title>Mixes — Prisss</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#06050a">
+<link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+@font-face {
+  font-family: 'Blade Runner Movie';
+  src: url('/fonts/blade-runner-movie.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg:         #06050a;
+  --warm:       #ddd5c2;
+  --warm-dim:   #6b6055;
+  --warm-faint: #28231d;
+  --groove:     #c4aa7e;
+  --needle:     #ede4d0;
+  --copper:     #c97a3a;
+  --font-hero:  'Blade Runner Movie', ui-monospace, monospace;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--warm);
+}
+
+body {
+  font-family: var(--font-hero);
+  line-height: 1.5;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 75% 75% at 50% 10%,
+    transparent 20%, rgba(6,5,10,0.88) 100%);
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: clamp(28px, 6vh, 56px) clamp(20px, 5vw, 40px) clamp(48px, 8vh, 80px);
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: clamp(24px, 5vh, 40px);
+  font-size: clamp(11px, 2.8vw, 14px);
+  letter-spacing: .12em;
+  color: var(--warm-dim);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.back:hover { color: var(--needle); }
+
+.eyebrow {
+  font-size: clamp(10px, 2.4vw, 12px);
+  letter-spacing: .18em;
+  color: var(--copper);
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: clamp(28px, 7vw, 48px);
+  font-weight: normal;
+  letter-spacing: .08em;
+  color: var(--needle);
+  margin-bottom: 14px;
+}
+
+.lead {
+  font-size: clamp(12px, 3vw, 15px);
+  letter-spacing: .06em;
+  color: var(--warm-dim);
+  margin-bottom: clamp(28px, 5vh, 40px);
+  max-width: 36rem;
+}
+
+.mixes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mix-card {
+  border: 1px solid var(--warm-faint);
+  padding: 14px 14px 10px;
+  background: rgba(6,5,10,0.55);
+}
+
+.mix-title {
+  font-size: clamp(11px, 2.8vw, 14px);
+  font-weight: normal;
+  letter-spacing: .06em;
+  color: var(--groove);
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+
+.mix-frame {
+  display: block;
+  width: 100%;
+  height: 60px;
+  border: 0;
+  background: transparent;
+}
+
+.site-audio {
+  position: fixed;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+</style>
+</head>
+<body>
+
+<div class="vignette" aria-hidden="true"></div>
+
+<main class="page">
+  <a href="/" class="back">← prisss</a>
+
+  <header>
+    <p class="eyebrow">Live recordings</p>
+    <h1 class="title">Mixes</h1>
+    <p class="lead">Experimental grooves and soundscapes — nearly all live, nearly no edits.</p>
+  </header>
+
+  <div id="mixes-list" class="mixes-list" aria-live="polite"></div>
+</main>
+
+<audio
+  id="site-audio"
+  class="site-audio"
+  src="/audio/end-of-part-iii-intermedium.mp3"
+  preload="auto"
+  autoplay
+  loop
+  aria-hidden="true"
+  tabindex="-1"
+></audio>
+
+<script src="/js/mixes-data.js" defer></script>
+<script src="/js/mixes.js" defer></script>
+<script src="/js/audio.js" defer></script>
+</body>
+</html>

@@ -214,6 +214,16 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.site-audio {
+  position: fixed;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
 </style>
 </head>
 <body>
@@ -351,6 +361,18 @@ body {
   </form>
 </main>
 
+<audio
+  id="site-audio"
+  class="site-audio"
+  src="/audio/end-of-part-iii-intermedium.mp3"
+  preload="auto"
+  autoplay
+  loop
+  aria-hidden="true"
+  tabindex="-1"
+></audio>
+
+<script src="/js/audio.js" defer></script>
 <script src="/js/formspree-form.js" defer></script>
 </body>
 </html>
