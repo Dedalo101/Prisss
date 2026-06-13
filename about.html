@@ -13,12 +13,13 @@
 <meta property="og:title" content="Bio — Dj Prisss (Natasha Thoday)">
 <meta property="og:description" content="Brighton-based DJ, live electronic music curator, and audio systems designer.">
 <meta property="og:url" content="https://prisss.com/about.html">
-<meta property="og:image" content="https://prisss.com/android-chrome-512x512.png">
+<meta property="og:image" content="https://prisss.com/assets/images/prisss-portrait.webp">
+<meta property="og:image:alt" content="Portrait of Natasha Thoday (Dj Prisss)">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Bio — Dj Prisss">
 <meta name="twitter:description" content="Brighton-based DJ, live electronic music curator, and audio systems designer.">
-<meta name="twitter:image" content="https://prisss.com/android-chrome-512x512.png">
+<meta name="twitter:image" content="https://prisss.com/assets/images/prisss-portrait.webp">
 
 <script type="application/ld+json">
 {
@@ -28,6 +29,7 @@
   "alternateName": "Dj Prisss",
   "jobTitle": "DJ",
   "description": "Brighton-based DJ, live electronic music curator, and audio systems designer.",
+  "image": "https://prisss.com/assets/images/prisss-portrait.webp",
   "url": "https://prisss.com/about.html",
   "homeLocation": {
     "@type": "Place",
@@ -59,6 +61,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#06050a">
+<link rel="preload" as="image" type="image/webp" href="/assets/images/prisss-portrait.webp" imagesrcset="/assets/images/prisss-portrait-480.webp 480w, /assets/images/prisss-portrait-720.webp 720w, /assets/images/prisss-portrait.webp 543w" imagesizes="(min-width: 48rem) 320px, min(320px, 100vw)">
 <link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -151,7 +154,39 @@ body {
   font-size: clamp(11px, 2.6vw, 14px);
   letter-spacing: .1em;
   color: var(--warm-dim);
-  margin-bottom: clamp(28px, 5vh, 40px);
+  margin-bottom: 0;
+}
+
+.bio-layout {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(24px, 4vw, 36px);
+  margin-top: clamp(28px, 5vh, 40px);
+}
+
+@media (min-width: 48rem) {
+  .bio-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.portrait {
+  margin: 0;
+  flex: 0 0 auto;
+  max-width: 320px;
+  width: 100%;
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  aspect-ratio: 543 / 578;
+  object-fit: cover;
+  border: 1px solid var(--warm-faint);
+  box-shadow: 0 0 0 1px rgba(201, 122, 58, 0.12);
 }
 
 .bio-body {
@@ -203,6 +238,25 @@ body {
     <p class="byline">Natasha Thoday</p>
   </header>
 
+  <div class="bio-layout">
+  <figure class="portrait">
+    <picture>
+      <source
+        type="image/webp"
+        srcset="/assets/images/prisss-portrait-480.webp 480w,
+                /assets/images/prisss-portrait-720.webp 720w,
+                /assets/images/prisss-portrait.webp 543w"
+        sizes="(min-width: 48rem) 320px, min(320px, 100vw)">
+      <img
+        src="/assets/images/prisss-portrait.png"
+        alt="Black and white portrait of Natasha Thoday (Dj Prisss), Brighton-based DJ and audio systems designer"
+        width="543"
+        height="578"
+        fetchpriority="high"
+        decoding="async">
+    </picture>
+  </figure>
+
   <div class="bio-body">
     <p>Dj Prisss is a Brighton-based DJ, live electronic music curator, and audio systems designer whose deep technical expertise and decades-long passion for sound set her apart in the underground electronic scene.</p>
 
@@ -215,6 +269,7 @@ body {
     <p>Since its founding in 2013, Prisss has been a driving force behind <a href="https://www.facebook.com/brighton.beep/" target="_blank" rel="noopener noreferrer">beep</a> (Brighton Experimental Electronic Performers), helping grow the collective to over 2,200 members and curating regular monthly live electronic gigs. She installed a signature vacuum tube sound system at Speakers Corner (Brighton’s original “Listening Café”) and continues to support the scene through promotion, technical innovation, and performances at local events and RA-listed nights.</p>
 
     <p>Drawing on global travels to more than 45 countries and a multidisciplinary background in design, education, and community projects, Prisss delivers sets and events that are technically precise, sonically adventurous, and community-oriented—celebrating electronic music’s power to connect and inspire.</p>
+  </div>
   </div>
 </main>
 
