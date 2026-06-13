@@ -17,7 +17,7 @@ jobs:
           node-version: '22'
 
       - name: Validate HTML
-        run: npx --yes html-validate index.html bookings.html mixes.html dj-sets.html
+        run: npx --yes html-validate index.html about.html bookings.html mixes.html dj-sets.html
 
       - name: Verify visuals embedded
         run: node scripts/embed-visuals.mjs --check
@@ -30,6 +30,6 @@ jobs:
       - name: Check external links
         uses: lycheeverse/lychee-action@v1
         with:
-          args: --no-progress --max-retries 2 --timeout 20 index.html bookings.html mixes.html dj-sets.html
+          args: --no-progress --max-retries 2 --timeout 20 index.html about.html bookings.html mixes.html dj-sets.html
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Artist bio — Dj Prisss (Natasha Thoday). Brighton-based DJ, live electronic curator, and audio systems designer.">
+<meta name="robots" content="index, follow">
+<title>Bio — Dj Prisss</title>
+<link rel="canonical" href="https://prisss.com/about.html">
+
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Prisss">
+<meta property="og:title" content="Bio — Dj Prisss (Natasha Thoday)">
+<meta property="og:description" content="Brighton-based DJ, live electronic music curator, and audio systems designer.">
+<meta property="og:url" content="https://prisss.com/about.html">
+<meta property="og:image" content="https://prisss.com/android-chrome-512x512.png">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bio — Dj Prisss">
+<meta name="twitter:description" content="Brighton-based DJ, live electronic music curator, and audio systems designer.">
+<meta name="twitter:image" content="https://prisss.com/android-chrome-512x512.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Natasha Thoday",
+  "alternateName": "Dj Prisss",
+  "jobTitle": "DJ",
+  "description": "Brighton-based DJ, live electronic music curator, and audio systems designer.",
+  "url": "https://prisss.com/about.html",
+  "homeLocation": {
+    "@type": "Place",
+    "name": "Brighton",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Brighton",
+      "addressCountry": "GB"
+    }
+  },
+  "memberOf": {
+    "@type": "MusicGroup",
+    "name": "Glue Records",
+    "url": "https://gluerecords.club"
+  },
+  "sameAs": [
+    "https://www.mixcloud.com/Prisss/",
+    "https://hearthis.at/prisss/",
+    "https://soundcloud.com/prisss",
+    "https://ra.co/promoters/188173",
+    "https://www.facebook.com/brighton.beep/"
+  ]
+}
+</script>
+
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#06050a">
+<link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+@font-face {
+  font-family: 'Blade Runner Movie';
+  src: url('/fonts/blade-runner-movie.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg:         #06050a;
+  --warm:       #ddd5c2;
+  --warm-dim:   #6b6055;
+  --warm-faint: #28231d;
+  --groove:     #c4aa7e;
+  --needle:     #ede4d0;
+  --copper:     #c97a3a;
+  --font-hero:  'Blade Runner Movie', ui-monospace, monospace;
+  --font-ui:    ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--warm);
+}
+
+body {
+  font-family: var(--font-ui);
+  line-height: 1.6;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 75% 75% at 50% 10%,
+    transparent 20%, rgba(6,5,10,0.88) 100%);
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: clamp(28px, 6vh, 56px) clamp(20px, 5vw, 40px) clamp(48px, 8vh, 80px);
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: clamp(24px, 5vh, 40px);
+  font-family: var(--font-hero);
+  font-size: clamp(11px, 2.8vw, 14px);
+  letter-spacing: .12em;
+  color: var(--warm-dim);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.back:hover { color: var(--needle); }
+
+.eyebrow {
+  font-family: var(--font-hero);
+  font-size: clamp(10px, 2.4vw, 12px);
+  letter-spacing: .18em;
+  color: var(--copper);
+  margin-bottom: 10px;
+}
+
+.title {
+  font-family: var(--font-hero);
+  font-size: clamp(28px, 7vw, 48px);
+  font-weight: normal;
+  letter-spacing: .08em;
+  color: var(--needle);
+  margin-bottom: 8px;
+}
+
+.byline {
+  font-family: var(--font-hero);
+  font-size: clamp(11px, 2.6vw, 14px);
+  letter-spacing: .1em;
+  color: var(--warm-dim);
+  margin-bottom: clamp(28px, 5vh, 40px);
+}
+
+.bio-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  font-size: clamp(14px, 2.8vw, 16px);
+  color: var(--warm);
+}
+
+.bio-body p {
+  max-width: 38rem;
+}
+
+.bio-body a {
+  color: var(--groove);
+  text-decoration: underline;
+  text-decoration-color: rgba(196, 170, 126, 0.45);
+  text-underline-offset: 0.15em;
+  transition: color .2s, text-decoration-color .2s;
+}
+
+.bio-body a:hover {
+  color: var(--needle);
+  text-decoration-color: var(--needle);
+}
+
+.site-audio {
+  position: fixed;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+</style>
+</head>
+<body data-page="sub">
+
+<div class="vignette" aria-hidden="true"></div>
+
+<main class="page">
+  <a href="/" class="back">← prisss</a>
+
+  <header>
+    <p class="eyebrow">Artist bio</p>
+    <h1 class="title">Dj Prisss</h1>
+    <p class="byline">Natasha Thoday</p>
+  </header>
+
+  <div class="bio-body">
+    <p>Dj Prisss is a Brighton-based DJ, live electronic music curator, and audio systems designer whose deep technical expertise and decades-long passion for sound set her apart in the underground electronic scene.</p>
+
+    <p>A lifelong music obsessive, Prisss began building and restoring vinyl playback systems as a child and went on to design and manufacture high-end audio equipment, including vacuum tube amplifiers, horn-loaded loudspeakers, and innovative vinyl replay systems. She developed phono cartridges for <a href="https://www.audionote.co.uk/" target="_blank" rel="noopener noreferrer">Audio Note</a> (models that remain in production and on their website today) and created experimental tonearm designs, including the spring-based “Delta-I” for Audio Innovations. This hands-on engineering background, combined with her industrial design training and exceptional three-dimensional visualization skills, informs every aspect of her DJing and event work.</p>
+
+    <p>Since 2013, performing as Prisss, she has released over 60 live, minimally edited DJ mixes exploring techno, deep house, chill-out, experimental grooves, and beyond. Her sets are available on <a href="https://www.mixcloud.com/Prisss/" target="_blank" rel="noopener noreferrer">Mixcloud</a> and <a href="https://hearthis.at/prisss/" target="_blank" rel="noopener noreferrer">Hearthis.at</a>, where she focuses on evolving fresh, exciting sonic journeys.</p>
+
+    <p>She has performed internationally, including a DJ set at Eden Gardens on Haad Yuan beach, Koh Phangan, Thailand in 2014, where she also designed custom loudspeaker mountings for the club.</p>
+
+    <p>Since its founding in 2013, Prisss has been a driving force behind <a href="https://www.facebook.com/brighton.beep/" target="_blank" rel="noopener noreferrer">beep</a> (Brighton Experimental Electronic Performers), helping grow the collective to over 2,200 members and curating regular monthly live electronic gigs. She installed a signature vacuum tube sound system at Speakers Corner (Brighton’s original “Listening Café”) and continues to support the scene through promotion, technical innovation, and performances at local events and RA-listed nights.</p>
+
+    <p>Drawing on global travels to more than 45 countries and a multidisciplinary background in design, education, and community projects, Prisss delivers sets and events that are technically precise, sonically adventurous, and community-oriented—celebrating electronic music’s power to connect and inspire.</p>
+  </div>
+</main>
+
+<audio
+  id="site-audio"
+  class="site-audio"
+  src="/audio/end-of-part-iii-intermedium.mp3"
+  preload="auto"
+  autoplay
+  loop
+  aria-hidden="true"
+  tabindex="-1"
+></audio>
+
+<script src="/js/audio.js" defer></script>
+<script src="/js/nav.js" defer></script>
+</body>
+</html>

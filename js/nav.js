@@ -10,6 +10,7 @@
     var path = anchor.pathname.replace(/\/index\.html$/, '/');
     return (
       path === '/' ||
+      path === '/about.html' ||
       path === '/bookings.html' ||
       path === '/mixes.html' ||
       path === '/dj-sets.html'
