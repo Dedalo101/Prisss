@@ -1,0 +1,9 @@
+{
+  "$schema": "https://html-validate.org/schemas/config.json",
+  "root": true,
+  "extends": ["html-validate:recommended"],
+  "rules": {
+    "hidden-focusable": "off",
+    "no-autoplay": "off"
+  }
+}
