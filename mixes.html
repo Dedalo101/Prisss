@@ -11,6 +11,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#06050a">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://widget.mixcloud.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https:; frame-src https://www.mixcloud.com https://player-widget.mixcloud.com; frame-ancestors 'none'">
 <link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -110,42 +111,75 @@ body {
 
 .mix-card {
   border: 1px solid var(--warm-faint);
-  padding: 14px 14px 10px;
+  padding: 14px;
   background: rgba(6,5,10,0.55);
+}
+
+.mix-media {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 36rem) {
+  .mix-media {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.mix-art-link {
+  flex: 0 0 auto;
+  display: block;
+  width: 120px;
+  max-width: 100%;
+  line-height: 0;
+  border: 1px solid var(--warm-faint);
+  transition: border-color .2s;
+}
+
+.mix-art-link:hover {
+  border-color: var(--copper);
+}
+
+.mix-art {
+  display: block;
+  width: 120px;
+  height: 120px;
+  max-width: 100%;
+  object-fit: cover;
+  background: var(--warm-faint);
+}
+
+.mix-body {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .mix-title {
   font-size: clamp(11px, 2.8vw, 14px);
   font-weight: normal;
   letter-spacing: .06em;
-  color: var(--groove);
   margin-bottom: 12px;
   line-height: 1.45;
 }
 
-.mix-frame-wrap {
-  position: relative;
-  width: 100%;
-  height: 60px;
-  overflow: hidden;
+.mix-title a {
+  color: var(--groove);
+  text-decoration: none;
+  transition: color .2s;
 }
 
-.mix-frame-wrap::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 104px;
-  height: 100%;
-  background: linear-gradient(to right, transparent 0%, rgba(6, 5, 10, 0.92) 42%, var(--bg) 68%);
-  pointer-events: auto;
+.mix-title a:hover {
+  color: var(--needle);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 .mix-frame {
   display: block;
-  width: calc(100% + 104px);
-  max-width: none;
-  height: 60px;
+  width: 100%;
+  height: 120px;
   border: 0;
   background: transparent;
 }

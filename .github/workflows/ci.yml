@@ -22,6 +22,9 @@ jobs:
       - name: Verify visuals embedded
         run: node scripts/embed-visuals.mjs --check
 
+      - name: Verify mixes data synced
+        run: node scripts/sync-mixes.mjs --check
+
   check-links:
     runs-on: ubuntu-latest
     steps:

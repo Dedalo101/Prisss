@@ -87,6 +87,8 @@
     bindMixcloud(Array.from(document.querySelectorAll('.mix-frame')));
   }
 
+  window.initPrisssEmbedAudio = init;
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
