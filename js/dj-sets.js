@@ -39,6 +39,8 @@
     root.appendChild(frag);
   }
 
+  window.PRISSS_SETS_RENDER = renderSets;
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', renderSets);
   } else {

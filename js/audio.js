@@ -47,6 +47,17 @@
     writeState();
   }
 
+  function resumeIfPlaying() {
+    if (pausedByEmbed) return;
+    var state = readState();
+    if (state && state.playing && audio.paused) {
+      var attempt = audio.play();
+      if (attempt && typeof attempt.catch === 'function') {
+        attempt.catch(function () {});
+      }
+    }
+  }
+
   function start() {
     if (pausedByEmbed) return;
     if (started && !audio.paused) return;
@@ -81,6 +92,10 @@
   var state = readState();
   window.PRISSS_AUDIO = {
     pauseForEmbed: pauseForEmbed,
+    resumeIfPlaying: resumeIfPlaying,
+    isPausedByEmbed: function () {
+      return pausedByEmbed;
+    },
   };
 
   if (state && state.unlocked) {

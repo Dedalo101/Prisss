@@ -62,7 +62,7 @@
 <meta name="theme-color" content="#06050a">
 <meta name="msapplication-TileColor" content="#06050a">
 <link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
-<style>
+<style id="page-styles">
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
 @font-face {
@@ -212,6 +212,13 @@ canvas {
 .title-wrap {
   position: relative;
   display: inline-block;
+  pointer-events: all;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
 }
 
 .title-wrap::before {
@@ -396,6 +403,119 @@ canvas {
   z-index: -1;
 }
 
+.bio-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(6, 5, 10, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.bio-panel {
+  position: fixed;
+  z-index: 31;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(44rem, calc(100vw - 32px));
+  max-height: min(82vh, 720px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(6, 5, 10, 0.96);
+  border: 1px solid var(--warm-faint);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  padding: clamp(20px, 4vw, 32px);
+  pointer-events: all;
+  font-family: ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.bio-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  margin: 0 0 8px 12px;
+  border: 1px solid var(--warm-faint);
+  background: transparent;
+  color: var(--warm-dim);
+  font-family: var(--font-hero);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.bio-close:hover { color: var(--needle); border-color: var(--groove); }
+
+.bio-eyebrow {
+  font-family: var(--font-hero);
+  font-size: clamp(10px, 2.4vw, 12px);
+  letter-spacing: .18em;
+  color: var(--copper);
+  margin-bottom: 10px;
+}
+
+.bio-title {
+  font-family: var(--font-hero);
+  font-size: clamp(24px, 6vw, 40px);
+  font-weight: normal;
+  letter-spacing: .08em;
+  color: var(--needle);
+  margin-bottom: 6px;
+}
+
+.bio-byline {
+  font-family: var(--font-hero);
+  font-size: clamp(11px, 2.6vw, 14px);
+  letter-spacing: .1em;
+  color: var(--warm-dim);
+  margin-bottom: 20px;
+}
+
+.bio-layout {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 4vw, 28px);
+}
+
+@media (min-width: 40rem) {
+  .bio-layout { flex-direction: row; align-items: flex-start; }
+}
+
+.bio-portrait {
+  margin: 0;
+  flex: 0 0 auto;
+  max-width: 220px;
+  width: 100%;
+}
+
+.bio-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 543 / 578;
+  object-fit: cover;
+  border: 1px solid var(--warm-faint);
+}
+
+.bio-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: clamp(13px, 2.6vw, 15px);
+  color: var(--warm);
+}
+
+.bio-body a {
+  color: var(--groove);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.bio-body a:hover { color: var(--needle); }
+
 @media (hover: none) and (pointer: coarse) {
   html, body { cursor: auto; }
   .cur-dot, .cur-ring { display: none !important; }
@@ -415,14 +535,13 @@ canvas {
 
 <main class="shell">
   <div class="center" id="main-content">
-    <div class="title-wrap" id="title-wrap">
+    <button type="button" class="title-wrap" id="title-wrap" aria-expanded="false" aria-controls="bio-panel" aria-label="Dj Prisss — open bio">
       <h1 class="title" data-text="Dj Prisss" id="lcp-title">Dj Prisss</h1>
-    </div>
+    </button>
   </div>
 
-  <nav class="corner-bl nav" aria-label="Mixes, bio and bookings">
+  <nav class="corner-bl nav" aria-label="Mixes and bookings">
     <a href="/mixes.html" class="nav-link">mixes</a>
-    <a href="/about.html" class="nav-link">bio</a>
     <a href="/bookings.html" class="nav-link">bookings</a>
   </nav>
 
@@ -431,6 +550,33 @@ canvas {
     <a href="https://gluerecords.club" target="_blank" rel="noopener noreferrer" class="nav-link">label</a>
   </nav>
 </main>
+
+<div id="bio-backdrop" class="bio-backdrop" hidden></div>
+<aside id="bio-panel" class="bio-panel" role="dialog" aria-modal="true" aria-labelledby="bio-title" hidden>
+  <button type="button" class="bio-close" id="bio-close">close</button>
+  <p class="bio-eyebrow">Artist bio</p>
+  <h2 class="bio-title" id="bio-title">Dj Prisss</h2>
+  <p class="bio-byline">Natasha Thoday</p>
+  <div class="bio-layout">
+    <figure class="bio-portrait">
+      <img
+        src="/assets/images/prisss-portrait-480.webp"
+        srcset="/assets/images/prisss-portrait-480.webp 480w, /assets/images/prisss-portrait-720.webp 720w"
+        sizes="220px"
+        alt="Portrait of Natasha Thoday (Dj Prisss)"
+        width="543"
+        height="578"
+        loading="lazy"
+        decoding="async">
+    </figure>
+    <div class="bio-body">
+      <p>Dj Prisss is a Brighton-based DJ, live electronic music curator, and audio systems designer whose deep technical expertise and decades-long passion for sound set her apart in the underground electronic scene.</p>
+      <p>A lifelong music obsessive, Prisss began building and restoring vinyl playback systems as a child and went on to design and manufacture high-end audio equipment, including vacuum tube amplifiers, horn-loaded loudspeakers, and innovative vinyl replay systems. She developed phono cartridges for <a href="https://www.audionote.co.uk/" target="_blank" rel="noopener noreferrer">Audio Note</a> and created experimental tonearm designs, including the spring-based “Delta-I” for Audio Innovations.</p>
+      <p>Since 2013, performing as Prisss, she has released over 60 live, minimally edited DJ mixes exploring techno, deep house, chill-out, experimental grooves, and beyond — on <a href="https://www.mixcloud.com/Prisss/" target="_blank" rel="noopener noreferrer">Mixcloud</a> and <a href="https://hearthis.at/prisss/" target="_blank" rel="noopener noreferrer">Hearthis.at</a>.</p>
+      <p>Since its founding in 2013, Prisss has been a driving force behind <a href="https://www.facebook.com/brighton.beep/" target="_blank" rel="noopener noreferrer">beep</a> (Brighton Experimental Electronic Performers), helping grow the collective to over 2,200 members and curating regular monthly live electronic gigs.</p>
+    </div>
+  </div>
+</aside>
 
 <audio
   id="site-audio"
@@ -445,307 +591,7 @@ canvas {
 
 <script src="js/audio.js" defer></script>
 <script src="js/nav.js" defer></script>
-<!-- visuals:inline:start -->
-<script>
-/** Full visuals; canvas starts after first paint for LCP */
-(function () {
-  'use strict';
-  function boot() {
-// ── Cursor ────────────────────────────────────────────────────────
-const cDot  = document.getElementById('cDot');
-const cRing = document.getElementById('cRing');
-let mx = innerWidth/2, my = innerHeight/2;
-let rx = mx, ry = my;
-
-function setPointer(x, y) {
-  mx = x; my = y;
-}
-document.addEventListener('mousemove', e => setPointer(e.clientX, e.clientY));
-document.addEventListener('touchmove', e => {
-  if (e.touches[0]) setPointer(e.touches[0].clientX, e.touches[0].clientY);
-}, { passive: true });
-document.querySelectorAll('a').forEach(a => {
-  a.addEventListener('mouseenter', () => cRing.classList.add('big'));
-  a.addEventListener('mouseleave', () => cRing.classList.remove('big'));
-});
-const titleWrap = document.getElementById('title-wrap');
-const heroTitle = document.getElementById('lcp-title');
-let titleRect = null;
-let overTitle = false;
-let titleFlashReady = 0;
-
-function updateTitleRect() {
-  if (!titleWrap) return;
-  titleRect = titleWrap.getBoundingClientRect();
-}
-
-function triggerTitleGlitch() {
-  if (!heroTitle || !titleWrap || performance.now() < titleFlashReady) return;
-  titleFlashReady = performance.now() + 320 + Math.random() * 900;
-  titleWrap.classList.remove('is-flashing');
-  heroTitle.classList.remove('is-glitching');
-  void titleWrap.offsetWidth;
-  titleWrap.classList.add('is-flashing');
-  heroTitle.classList.add('is-glitching');
-  window.setTimeout(() => titleWrap.classList.remove('is-flashing'), 180);
-  window.setTimeout(() => heroTitle.classList.remove('is-glitching'), 240);
-}
-
-function checkTitleHover(x, y) {
-  if (!titleRect) return;
-  const pad = 28;
-  const hit =
-    x >= titleRect.left - pad &&
-    x <= titleRect.right + pad &&
-    y >= titleRect.top - pad &&
-    y <= titleRect.bottom + pad;
-
-  if (hit && !overTitle) {
-    overTitle = true;
-    triggerTitleGlitch();
-  } else if (!hit) {
-    overTitle = false;
-  } else if (hit && Math.random() < 0.012) {
-    triggerTitleGlitch();
-  }
-}
-
-updateTitleRect();
-window.addEventListener('resize', updateTitleRect);
-
-(function animCursor() {
-  rx += (mx - rx) * 0.11; ry += (my - ry) * 0.11;
-  cDot.style.left  = mx + 'px'; cDot.style.top  = my + 'px';
-  cRing.style.left = rx + 'px'; cRing.style.top = ry + 'px';
-  checkTitleHover(mx, my);
-  requestAnimationFrame(animCursor);
-})();
-
-// ── Canvas ────────────────────────────────────────────────────────
-const canvas = document.getElementById('c');
-const ctx    = canvas.getContext('2d');
-let W, H;
-function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
-resize(); window.addEventListener('resize', () => { resize(); initGrooves(); });
-
-let mouseX = W/2, mouseY = H/2;
-function setMouse(x, y) { mouseX = x; mouseY = y; }
-document.addEventListener('mousemove', e => setMouse(e.clientX, e.clientY));
-document.addEventListener('touchmove', e => {
-  if (e.touches[0]) setMouse(e.touches[0].clientX, e.touches[0].clientY);
-}, { passive: true });
-
-// ── Colour helpers ────────────────────────────────────────────────
-const C = {
-  groove: [196,170,126],
-  needle: [237,228,208],
-  copper: [201,122, 58],
-  ember:  [180, 90, 30],
-  dark:   [ 30, 24, 18],
-};
-const rgba = (c,a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
-
-// ── 1. GROOVE RINGS (v2 DNA) — but denser, more prominent ─────────
-const RINGS = window.innerWidth < 768 ? 50 : 90;
-let grooves = [];
-function initGrooves() {
-  grooves = Array.from({length:RINGS}, (_,i) => ({
-    i,
-    phase:  (i/RINGS) * Math.PI * 2 + Math.random() * 0.4,
-    wobble: (Math.random()-.5) * 0.004,
-    thick:  i % 9 === 0 ? 1.1 : (i % 3 === 0 ? 0.6 : 0.3),
-    opacity: 0.025 + (i/RINGS) * 0.055,   // outer rings brighter = more prominent
-  }));
-}
-initGrooves();
-
-function drawGrooves(t) {
-  const cx = W/2, cy = H/2;
-  const maxR = Math.min(W,H) * 0.47;
-  const minR = Math.min(W,H) * 0.03;
-  const mdx  = (mouseX - cx) / W;
-  const mdy  = (mouseY - cy) / H;
-
-  grooves.forEach(g => {
-    const base = minR + (maxR - minR) * (g.i / RINGS);
-    const r    = base + Math.sin(t * 0.28 + g.phase) * base * 0.012;
-    // eccentricity: mouse warps the rings like a poorly-centred pressing
-    const ex   = cx + mdx * (g.i/RINGS) * 28;
-    const ey   = cy + mdy * (g.i/RINGS) * 20;
-
-    ctx.beginPath();
-    for (let s = 0; s <= 160; s++) {
-      const a = (s/160) * Math.PI * 2;
-      const px = ex + Math.cos(a) * r;
-      const py = ey + Math.sin(a) * r;
-      s === 0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
-    }
-    ctx.closePath();
-
-    // Highlighted ring nearest cursor
-    const dToCenter = Math.hypot(mouseX - cx, mouseY - cy);
-    const nearThis  = Math.abs(dToCenter - r) < 14;
-    ctx.strokeStyle = nearThis
-      ? rgba(C.copper, g.opacity * 4.5)
-      : rgba(C.groove, g.opacity);
-    ctx.lineWidth   = nearThis ? g.thick * 2.2 : g.thick;
-    ctx.stroke();
-  });
-
-  // Spindle
-  ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, Math.PI*2);
-  ctx.fillStyle = rgba(C.groove, 0.4); ctx.fill();
-  ctx.beginPath(); ctx.arc(cx, cy, 1.4, 0, Math.PI*2);
-  ctx.fillStyle = rgba(C.needle, 0.75); ctx.fill();
-}
-
-// ── 2. LISSAJOUS ATTRACTORS (v1 DNA) — warm copper palette ────────
-class Attractor {
-  constructor(a, b, d, scale, speed) {
-    Object.assign(this, {a,b,d,scale,speed});
-    this.t     = Math.random() * Math.PI * 2;
-    this.cx    = 0.38 + Math.random() * 0.24;
-    this.cy    = 0.38 + Math.random() * 0.24;
-    this.alpha = 0.028 + Math.random() * 0.032;
-    this.col   = Math.random() < 0.5 ? C.copper : C.groove;
-  }
-  draw(t) {
-    const ox = this.cx * W, oy = this.cy * H;
-    const steps = 380;
-    ctx.beginPath();
-    for (let i = 0; i <= steps; i++) {
-      const u = (i/steps) * Math.PI * 2;
-      const x = ox + Math.sin(this.a * u + this.d + t * this.speed * 0.18) * this.scale;
-      const y = oy + Math.sin(this.b * u                                  ) * this.scale * 0.62;
-      i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle = rgba(this.col, this.alpha);
-    ctx.lineWidth   = 0.55;
-    ctx.stroke();
-  }
-}
-
-const attractors = [
-  new Attractor(3, 2, 1.5,  Math.min(W,H)*0.26, 0.6),
-  new Attractor(5, 4, 0.9,  Math.min(W,H)*0.19, 0.45),
-  new Attractor(2, 3, 0.35, Math.min(W,H)*0.31, 0.8),
-  new Attractor(7, 6, 1.1,  Math.min(W,H)*0.14, 0.55),
-];
-
-// ── 3. PARTICLES (v1 DNA) — re-coloured warm ──────────────────────
-const PCOUNT = window.innerWidth < 768 ? 120 : 240;
-const parts  = [];
-
-function mkParticle() {
-  const angle = Math.random() * Math.PI * 2;
-  const orb   = 60 + Math.random() * Math.min(W,H) * 0.48;
-  const isCopper = Math.random() < 0.1;
-  return {
-    x:orb*Math.cos(angle)+W/2, y:orb*Math.sin(angle)+H/2,
-    vx:0, vy:0,
-    angle, orb,
-    drift:  (Math.random()-.5) * 0.0018,
-    speed:  Math.random() * 0.35 + 0.08,
-    size:   Math.random() * 1.1 + 0.3,
-    alpha:  Math.random() * 0.45 + 0.12,
-    col:    isCopper ? C.copper : (Math.random()<0.2 ? C.needle : C.groove),
-  };
-}
-for (let i = 0; i < PCOUNT; i++) parts.push(mkParticle());
-
-function drawParticles(t) {
-  const cx = W/2, cy = H/2;
-  parts.forEach(p => {
-    p.angle += p.drift + p.speed * 0.003;
-    p.orb   += Math.sin(t + p.angle) * 0.14;
-    const tx = cx + Math.cos(p.angle) * p.orb;
-    const ty = cy + Math.sin(p.angle) * p.orb;
-    const dM = Math.hypot(mouseX - tx, mouseY - ty);
-    const rep = Math.max(0, 150 - dM) / 150;
-    const fx  = (tx - mouseX) / (dM||1) * rep * 70;
-    const fy  = (ty - mouseY) / (dM||1) * rep * 70;
-    p.vx += ((tx+fx) - p.x) * 0.045; p.vy += ((ty+fy) - p.y) * 0.045;
-    p.vx *= 0.87; p.vy *= 0.87;
-    p.x  += p.vx;  p.y  += p.vy;
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-    ctx.fillStyle = rgba(p.col, p.alpha);
-    ctx.fill();
-  });
-
-  // Connection threads — thinner, warmer
-  ctx.lineWidth = 0.25;
-  for (let i = 0; i < parts.length; i++) {
-    for (let j = i+1; j < parts.length; j++) {
-      const dx = parts[i].x - parts[j].x;
-      const dy = parts[i].y - parts[j].y;
-      const d  = Math.sqrt(dx*dx + dy*dy);
-      if (d < 80) {
-        ctx.strokeStyle = rgba(C.groove, (1-d/80) * 0.1);
-        ctx.beginPath();
-        ctx.moveTo(parts[i].x, parts[i].y);
-        ctx.lineTo(parts[j].x, parts[j].y);
-        ctx.stroke();
-      }
-    }
-  }
-}
-
-// ── 4. NEEDLE GLOW at cursor ──────────────────────────────────────
-function drawGlow() {
-  const g = ctx.createRadialGradient(mouseX,mouseY,0, mouseX,mouseY,80);
-  g.addColorStop(0,   rgba(C.needle, 0.1));
-  g.addColorStop(0.4, rgba(C.copper, 0.04));
-  g.addColorStop(1,   rgba(C.groove, 0));
-  ctx.beginPath(); ctx.arc(mouseX, mouseY, 80, 0, Math.PI*2);
-  ctx.fillStyle = g; ctx.fill();
-}
-
-// ── Slow Archimedean spiral ghost (tonearm trace) ─────────────────
-function drawSpiralGhost(t) {
-  const cx = W/2, cy = H/2;
-  const maxR = Math.min(W,H) * 0.47;
-  ctx.beginPath();
-  for (let s = 0; s <= 700; s++) {
-    const frac  = s/700;
-    const theta = frac * 7 * Math.PI * 2 + t * 0.04;
-    const r     = frac * maxR;
-    const x     = cx + Math.cos(theta) * r;
-    const y     = cy + Math.sin(theta) * r;
-    s === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-  }
-  ctx.strokeStyle = rgba(C.ember, 0.018);
-  ctx.lineWidth   = 0.5;
-  ctx.stroke();
-}
-
-// ── Render ────────────────────────────────────────────────────────
-let t = 0;
-function frame() {
-  if (!canvas.isConnected) return;
-  t += 0.009;
-  ctx.fillStyle = 'rgba(6,5,10,0.2)';
-  ctx.fillRect(0, 0, W, H);
-
-  drawSpiralGhost(t);
-  drawGrooves(t);
-  attractors.forEach(a => a.draw(t));
-  drawParticles(t);
-  drawGlow();
-
-  requestAnimationFrame(frame);
-}
-frame();
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', schedule, { once: true });
-  } else schedule();
-  function schedule() {
-    requestAnimationFrame(() => requestAnimationFrame(boot));
-  }
-})();
-</script>
-<!-- visuals:inline:end -->
+<script src="js/visuals.js" defer data-page-script="js/visuals.js"></script>
+<script src="js/bio.js" defer data-page-script="js/bio.js"></script>
 </body>
 </html>

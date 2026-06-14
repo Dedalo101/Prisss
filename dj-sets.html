@@ -12,7 +12,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#06050a">
 <link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
-<style>
+<style id="page-styles">
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
 @font-face {
@@ -41,6 +41,8 @@ html {
 
 html, body {
   min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--bg);
   color: var(--warm);
 }

@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#06050a">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://widget.mixcloud.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https:; frame-src https://www.mixcloud.com https://player-widget.mixcloud.com; frame-ancestors 'none'">
 <link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
-<style>
+<style id="page-styles">
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
 @font-face {
@@ -42,6 +42,8 @@ html {
 
 html, body {
   min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--bg);
   color: var(--warm);
 }

@@ -63,7 +63,7 @@
 <meta name="theme-color" content="#06050a">
 <link rel="preload" as="image" type="image/webp" href="/assets/images/prisss-portrait.webp" imagesrcset="/assets/images/prisss-portrait-480.webp 480w, /assets/images/prisss-portrait-720.webp 720w, /assets/images/prisss-portrait.webp 543w" imagesizes="(min-width: 48rem) 320px, min(320px, 100vw)">
 <link rel="preload" as="font" type="font/ttf" href="/fonts/blade-runner-movie.ttf" crossorigin>
-<style>
+<style id="page-styles">
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
 @font-face {
@@ -93,6 +93,8 @@ html {
 
 html, body {
   min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--bg);
   color: var(--warm);
 }

@@ -88,6 +88,7 @@
   }
 
   window.initPrisssEmbedAudio = init;
+  window.PRISSS_EMBED_AUDIO_BOOT = init;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

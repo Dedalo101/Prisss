@@ -79,6 +79,8 @@
     }
   }
 
+  window.PRISSS_MIXES_RENDER = renderShows;
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', renderShows);
   } else {

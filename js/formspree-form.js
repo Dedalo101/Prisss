@@ -44,5 +44,10 @@
     });
   }
 
-  document.querySelectorAll('form[data-formspree-ajax]').forEach(wireForm);
+  function boot() {
+    document.querySelectorAll('form[data-formspree-ajax]').forEach(wireForm);
+  }
+
+  window.PRISSS_FORM_BOOT = boot;
+  boot();
 })();
