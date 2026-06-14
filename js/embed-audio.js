@@ -3,6 +3,8 @@
 
   var MIXCLOUD_API = 'https://widget.mixcloud.com/media/js/widgetApi.js';
   var apiLoading = false;
+  var mixWidgets = new WeakMap();
+  var activeIframe = null;
 
   function pauseAmbient() {
     if (window.PRISSS_AUDIO && typeof window.PRISSS_AUDIO.pauseForEmbed === 'function') {
@@ -30,10 +32,59 @@
     return data.playing === true;
   }
 
+  function storeIframeSrc(iframe) {
+    if (!iframe.dataset.embedSrc) {
+      iframe.dataset.embedSrc = iframe.getAttribute('src') || '';
+    }
+  }
+
+  function pauseMixcloud(iframe) {
+    var widget = mixWidgets.get(iframe);
+    if (widget && typeof widget.pause === 'function') {
+      widget.pause().catch(function () {});
+    }
+  }
+
+  function pauseHearthis(iframe) {
+    storeIframeSrc(iframe);
+    iframe.src = 'about:blank';
+  }
+
+  function restoreHearthis(iframe) {
+    if (!iframe.dataset.embedSrc) return;
+    if (iframe.getAttribute('src') !== 'about:blank') return;
+    iframe.src = iframe.dataset.embedSrc;
+  }
+
+  function pauseEmbed(iframe) {
+    if (!iframe) return;
+    if (iframe.classList.contains('mix-frame')) {
+      pauseMixcloud(iframe);
+      return;
+    }
+    if (iframe.classList.contains('set-frame')) {
+      pauseHearthis(iframe);
+    }
+  }
+
+  function pauseOtherEmbeds(current) {
+    Array.from(document.querySelectorAll('.mix-frame, .set-frame')).forEach(function (iframe) {
+      if (iframe !== current) pauseEmbed(iframe);
+    });
+  }
+
+  function onEmbedPlay(iframe) {
+    pauseAmbient();
+    pauseOtherEmbeds(iframe);
+    activeIframe = iframe;
+  }
+
   function bindIframeFocus() {
     window.addEventListener('blur', function () {
       setTimeout(function () {
-        if (isEmbedIframe(document.activeElement)) pauseAmbient();
+        var active = document.activeElement;
+        if (!isEmbedIframe(active)) return;
+        onEmbedPlay(active);
       }, 0);
     });
   }
@@ -41,7 +92,29 @@
   function bindPostMessage() {
     window.addEventListener('message', function (event) {
       if (!/mixcloud\.com|hearthis\.at/i.test(event.origin || '')) return;
-      if (isPlayMessage(event.data)) pauseAmbient();
+      if (!isPlayMessage(event.data)) return;
+
+      var iframe = Array.from(document.querySelectorAll('.mix-frame, .set-frame')).find(function (frame) {
+        return frame.contentWindow === event.source;
+      });
+
+      onEmbedPlay(iframe || activeIframe);
+    });
+  }
+
+  function bindHearthisFrames(iframes) {
+    iframes.forEach(function (iframe) {
+      if (iframe.dataset.embedAudioBound === '1') return;
+      iframe.dataset.embedAudioBound = '1';
+      storeIframeSrc(iframe);
+
+      iframe.addEventListener('mouseenter', function () {
+        restoreHearthis(iframe);
+      }, { passive: true });
+
+      iframe.addEventListener('focus', function () {
+        restoreHearthis(iframe);
+      });
     });
   }
 
@@ -51,8 +124,11 @@
 
     try {
       var widget = Mixcloud.PlayerWidget(iframe);
+      mixWidgets.set(iframe, widget);
       widget.ready.then(function () {
-        widget.events.play.on(pauseAmbient);
+        widget.events.play.on(function () {
+          onEmbedPlay(iframe);
+        });
       });
     } catch (_err) {
       /* keep iframe-focus fallback */
@@ -84,7 +160,12 @@
       bindIframeFocus();
       bindPostMessage();
     }
-    bindMixcloud(Array.from(document.querySelectorAll('.mix-frame')));
+
+    var mixFrames = Array.from(document.querySelectorAll('.mix-frame'));
+    var setFrames = Array.from(document.querySelectorAll('.set-frame'));
+
+    bindMixcloud(mixFrames);
+    bindHearthisFrames(setFrames);
   }
 
   window.initPrisssEmbedAudio = init;

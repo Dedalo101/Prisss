@@ -37,6 +37,10 @@
 
     root.innerHTML = '';
     root.appendChild(frag);
+
+    if (window.PRISSS_EMBED_AUDIO_INIT && typeof window.initPrisssEmbedAudio === 'function') {
+      window.initPrisssEmbedAudio();
+    }
   }
 
   window.PRISSS_SETS_RENDER = renderSets;

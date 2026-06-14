@@ -1,18 +1,7 @@
-/* Blade Runner Movie maps B/b to the film logo — route those codepoints to monospace */
 @font-face {
   font-family: 'Blade Runner Movie';
   src: url('/fonts/blade-runner-movie.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0020-0041, U+0043-0061, U+0063-007E, U+00A0-FFFF;
-}
-
-@font-face {
-  font-family: 'Blade Runner Movie';
-  src: local('Consolas'), local('Monaco'), local('Courier New'), local('ui-monospace'), local('monospace');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-  unicode-range: U+0042, U+0062;
 }

@@ -107,8 +107,9 @@
 
   function swapBody(doc) {
     var audio = document.getElementById('site-audio');
+    var pauseBtn = document.getElementById('audio-pause-btn');
     Array.from(document.body.childNodes).forEach(function (node) {
-      if (node !== audio) node.remove();
+      if (node !== audio && node !== pauseBtn) node.remove();
     });
 
     Array.from(doc.body.childNodes).forEach(function (node) {
@@ -178,6 +179,9 @@
         return runScripts(path);
       })
       .then(function () {
+        if (window.PRISSS_AUDIO && typeof window.PRISSS_AUDIO.ensurePauseButton === 'function') {
+          window.PRISSS_AUDIO.ensurePauseButton();
+        }
         resumeAmbientAudio();
       })
       .catch(function () {
