@@ -19,15 +19,15 @@ const visuals = fs.readFileSync(sourcePath, 'utf8');
 const block = `${markerStart}\n<script>\n${visuals}\n</script>\n${markerEnd}`;
 
 const index = fs.readFileSync(indexPath, 'utf8');
-const externalTag = '<script src="js/visuals.js" defer></script>';
-const re = new RegExp(`${markerStart}[\\s\\S]*?${markerEnd}|${externalTag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`);
+const externalTagRe = /<script\b[^>]*\bsrc=["']js\/visuals\.js["'][^>]*><\/script>/;
+const inlineRe = new RegExp(`${markerStart}[\\s\\S]*?${markerEnd}`);
 
-if (!re.test(index)) {
+if (!inlineRe.test(index) && !externalTagRe.test(index)) {
   console.error('embed-visuals: no visuals slot found in index.html');
   process.exit(1);
 }
 
-const next = index.replace(re, block);
+const next = index.replace(inlineRe, block).replace(externalTagRe, block);
 
 if (checkOnly) {
   if (next === index) {
