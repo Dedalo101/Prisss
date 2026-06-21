@@ -391,6 +391,34 @@ canvas {
   100% { clip-path:polygon(0 0,0 0,0 0,0 0); opacity:0; }
 }
 
+/* ── Hover glitch takeover: glitch visible ~65% of cycle ── */
+.title.is-title-hover { animation: title-idle 0.55s infinite step-end; }
+.title.is-title-hover::before { animation: g1-hover 0.62s infinite step-start; }
+.title.is-title-hover::after  { animation: g2-hover 0.74s infinite step-start; }
+
+@keyframes g1-hover {
+  0%  { clip-path:polygon(0  0%,100%  0%,100% 22%,0 22%); transform:translate(-6px, 1px); opacity:.92; }
+  14% { clip-path:polygon(0 24%,100% 24%,100% 46%,0 46%); transform:translate( 5px,-2px); opacity:.78; }
+  28% { clip-path:polygon(0 50%,100% 50%,100% 70%,0 70%); transform:translate(-4px, 2px); opacity:.85; }
+  42% { clip-path:polygon(0 72%,100% 72%,100% 90%,0 90%); transform:translate( 7px, 0px); opacity:.7;  }
+  56% { clip-path:polygon(0  8%,100%  8%,100% 32%,0 32%); transform:translate(-5px,-1px); opacity:.88; }
+  70% { clip-path:polygon(0 38%,100% 38%,100% 58%,0 58%); transform:translate( 4px, 2px); opacity:.65; }
+  82% { clip-path:polygon(0  0,0  0,0  0,0  0); opacity:0; }
+  90% { clip-path:polygon(0 62%,100% 62%,100% 80%,0 80%); transform:translate(-7px, 1px); opacity:.8; }
+  100%{ clip-path:polygon(0  0%,100%  0%,100% 22%,0 22%); transform:translate(-6px, 1px); opacity:.92; }
+}
+
+@keyframes g2-hover {
+  0%  { clip-path:polygon(0  4%,100%  4%,100% 26%,0 26%); transform:translate( 6px, 2px); opacity:.68; }
+  18% { clip-path:polygon(0 30%,100% 30%,100% 52%,0 52%); transform:translate(-5px,-1px); opacity:.58; }
+  35% { clip-path:polygon(0 56%,100% 56%,100% 76%,0 76%); transform:translate( 4px, 0px); opacity:.72; }
+  50% { clip-path:polygon(0  0,0  0,0  0,0  0); opacity:0; }
+  62% { clip-path:polygon(0 14%,100% 14%,100% 38%,0 38%); transform:translate(-6px, 2px); opacity:.62; }
+  78% { clip-path:polygon(0 64%,100% 64%,100% 82%,0 82%); transform:translate( 5px,-2px); opacity:.55; }
+  90% { clip-path:polygon(0  0,0  0,0  0,0  0); opacity:0; }
+  100%{ clip-path:polygon(0  4%,100%  4%,100% 26%,0 26%); transform:translate( 6px, 2px); opacity:.68; }
+}
+
 @media (max-width: 768px) {
   .shell {
     display: block;
@@ -683,6 +711,8 @@ canvas {
     }, 240);
   }
 
+  var overInteractive = false;
+
   function checkTitleHover(x, y) {
     if (!titleRect) return;
     var pad = 28;
@@ -692,13 +722,25 @@ canvas {
       y >= titleRect.top - pad &&
       y <= titleRect.bottom + pad;
 
+    var heroTitle = document.getElementById('lcp-title');
+
     if (hit && !overTitle) {
       overTitle = true;
+      if (heroTitle) heroTitle.classList.add('is-title-hover');
       triggerTitleGlitch();
+      if (window.PRISSS_TAPE) window.PRISSS_TAPE.disable();
     } else if (!hit) {
+      if (overTitle && heroTitle) heroTitle.classList.remove('is-title-hover');
       overTitle = false;
     } else if (hit && Math.random() < 0.012) {
       triggerTitleGlitch();
+    }
+
+    /* canvas hover = pointer is on page but not over title or any interactive el */
+    if (!hit && !overInteractive) {
+      if (window.PRISSS_TAPE) window.PRISSS_TAPE.enable();
+    } else {
+      if (window.PRISSS_TAPE) window.PRISSS_TAPE.disable();
     }
   }
 
@@ -714,13 +756,18 @@ canvas {
     }, { passive: true });
     document.addEventListener('mouseover', function (e) {
       var ring = document.getElementById('cRing');
-      if (!ring || !ring.isConnected) return;
-      if (e.target.closest('a, button')) ring.classList.add('big');
+      if (e.target.closest('a, button, [role="dialog"], aside')) {
+        overInteractive = true;
+        if (ring && ring.isConnected) ring.classList.add('big');
+        if (window.PRISSS_TAPE) window.PRISSS_TAPE.disable();
+      }
     });
     document.addEventListener('mouseout', function (e) {
       var ring = document.getElementById('cRing');
-      if (!ring || !ring.isConnected) return;
-      if (e.target.closest('a, button')) ring.classList.remove('big');
+      if (e.target.closest('a, button, [role="dialog"], aside')) {
+        overInteractive = false;
+        if (ring && ring.isConnected) ring.classList.remove('big');
+      }
     });
     window.addEventListener('resize', updateTitleRect);
   }
@@ -1018,5 +1065,109 @@ canvas {
 </script>
 <!-- visuals:inline:end -->
 <script src="js/bio.js" defer data-page-script="js/bio.js"></script>
+<script>
+/* ── Tape effect: Web Audio chain activated when pointer is over the matrix ── */
+(function () {
+  'use strict';
+  var audioEl = document.getElementById('site-audio');
+  if (!audioEl) return;
+
+  var actx = null;
+  var chain = null;
+  var tapeOn = false;
+  var ready = false;
+
+  function buildChain(ac) {
+    var src = ac.createMediaElementSource(audioEl);
+
+    /* Wow LFO (~0.7 Hz) — slow pitch drift like worn tape */
+    var wowOsc = ac.createOscillator();
+    wowOsc.frequency.value = 0.7;
+    var wowGain = ac.createGain();
+    wowGain.gain.value = 0.0001; /* start silent */
+
+    /* Flutter LFO (~9 Hz) — fast mechanical shimmer */
+    var flutterOsc = ac.createOscillator();
+    flutterOsc.frequency.value = 9;
+    var flutterGain = ac.createGain();
+    flutterGain.gain.value = 0.0001;
+
+    /* Delay node — LFOs modulate its time to create pitch wobble */
+    var delay = ac.createDelay(0.06);
+    delay.delayTime.value = 0.003;
+    wowOsc.connect(wowGain);
+    wowGain.connect(delay.delayTime);
+    flutterOsc.connect(flutterGain);
+    flutterGain.connect(delay.delayTime);
+    wowOsc.start();
+    flutterOsc.start();
+
+    /* Waveshaper — soft tape saturation with slight asymmetry */
+    var shaper = ac.createWaveShaper();
+    var curve = new Float32Array(512);
+    for (var i = 0; i < 512; i++) {
+      var x = (i * 2 / 511) - 1;
+      curve[i] = (Math.tanh(x * 2.2) * 0.88) + (x * x * 0.06 * (x > 0 ? 1 : -1));
+    }
+    shaper.curve = curve;
+    shaper.oversample = '4x';
+
+    /* Low-pass — tape head high-freq rolloff */
+    var lpf = ac.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.value = 20000; /* start wide open */
+    lpf.Q.value = 0.4;
+
+    /* Output gain — compensate for any volume change */
+    var out = ac.createGain();
+    out.gain.value = 1.05;
+
+    src.connect(delay);
+    delay.connect(shaper);
+    shaper.connect(lpf);
+    lpf.connect(out);
+    out.connect(ac.destination);
+
+    return { src: src, wowGain: wowGain, flutterGain: flutterGain, delay: delay, lpf: lpf };
+  }
+
+  function init() {
+    if (ready) return;
+    try {
+      actx = new (window.AudioContext || window.webkitAudioContext)();
+      chain = buildChain(actx);
+      ready = true;
+    } catch (e) { /* Web Audio not supported */ }
+  }
+
+  function enableTape() {
+    if (tapeOn) return;
+    tapeOn = true;
+    if (!ready) init();
+    if (!chain) return;
+    var now = actx.currentTime;
+    /* Ramp LFOs up: wow ±3 ms, flutter ±0.6 ms */
+    chain.wowGain.gain.setTargetAtTime(0.003, now, 0.4);
+    chain.flutterGain.gain.setTargetAtTime(0.0006, now, 0.25);
+    /* Roll off highs to ~6 kHz — cassette tape character */
+    chain.lpf.frequency.setTargetAtTime(6000, now, 0.5);
+  }
+
+  function disableTape() {
+    if (!tapeOn) return;
+    tapeOn = false;
+    if (!chain) return;
+    var now = actx.currentTime;
+    chain.wowGain.gain.setTargetAtTime(0.0001, now, 0.5);
+    chain.flutterGain.gain.setTargetAtTime(0.0001, now, 0.35);
+    chain.lpf.frequency.setTargetAtTime(20000, now, 0.6);
+  }
+
+  /* Init on first user gesture so AudioContext is allowed */
+  document.addEventListener('pointerdown', init, { once: true, passive: true });
+
+  window.PRISSS_TAPE = { enable: enableTape, disable: disableTape };
+})();
+</script>
 </body>
 </html>
