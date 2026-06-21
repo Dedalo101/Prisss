@@ -650,7 +650,7 @@ canvas {
   id="site-audio"
   class="site-audio"
   src="/audio/end-of-part-iii-intermedium.mp3"
-  preload="none"
+  preload="auto"
   autoplay
   loop
   aria-hidden="true"
@@ -1137,8 +1137,15 @@ canvas {
       actx = new (window.AudioContext || window.webkitAudioContext)();
       chain = buildChain(actx);
       ready = true;
-    } catch (e) { /* Web Audio not supported */ }
+    } catch (e) { /* Web Audio not supported */ return; }
+    /* Browsers suspend AudioContext until a user gesture — resume it now */
+    if (actx.state === 'suspended') actx.resume();
   }
+
+  /* Keep context running whenever audio plays (handles page restore / tab switch) */
+  audioEl.addEventListener('play', function () {
+    if (actx && actx.state === 'suspended') actx.resume();
+  });
 
   function enableTape() {
     if (tapeOn) return;
