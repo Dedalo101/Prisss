@@ -728,19 +728,11 @@ canvas {
       overTitle = true;
       if (heroTitle) heroTitle.classList.add('is-title-hover');
       triggerTitleGlitch();
-      if (window.PRISSS_TAPE) window.PRISSS_TAPE.disable();
     } else if (!hit) {
       if (overTitle && heroTitle) heroTitle.classList.remove('is-title-hover');
       overTitle = false;
     } else if (hit && Math.random() < 0.012) {
       triggerTitleGlitch();
-    }
-
-    /* canvas hover = pointer is on page but not over title or any interactive el */
-    if (!hit && !overInteractive) {
-      if (window.PRISSS_TAPE) window.PRISSS_TAPE.enable();
-    } else {
-      if (window.PRISSS_TAPE) window.PRISSS_TAPE.disable();
     }
   }
 
@@ -759,7 +751,6 @@ canvas {
       if (e.target.closest('a, button, [role="dialog"], aside')) {
         overInteractive = true;
         if (ring && ring.isConnected) ring.classList.add('big');
-        if (window.PRISSS_TAPE) window.PRISSS_TAPE.disable();
       }
     });
     document.addEventListener('mouseout', function (e) {
@@ -768,6 +759,10 @@ canvas {
         overInteractive = false;
         if (ring && ring.isConnected) ring.classList.remove('big');
       }
+    });
+    document.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('a, button, [role="dialog"], aside, #title-wrap')) return;
+      if (window.PRISSS_BURST) window.PRISSS_BURST(e.clientX, e.clientY);
     });
     window.addEventListener('resize', updateTitleRect);
   }
@@ -877,6 +872,84 @@ canvas {
         col: isCopper ? C.copper : Math.random() < 0.2 ? C.needle : C.groove,
       };
     }
+
+    /* ── Click-burst particles — spawn at click, arc out, gravity back to vinyl ── */
+    var burstParts = [];
+
+    /* Light shades: brighter/lighter variations on the palette */
+    var burstCols = [
+      C.needle,              /* cream-white */
+      C.groove,              /* warm gold */
+      C.copper,              /* copper-orange */
+      [220, 205, 175],       /* pale gold */
+      [245, 235, 215],       /* near-white warm */
+      [210, 160, 90],        /* amber */
+      [180, 140, 80],        /* darker amber */
+    ];
+
+    function spawnBurst(cx_w, cy_w) {
+      var cx = W / 2, cy = H / 2;
+      var maxR = Math.min(W, H) * 0.46;
+      var count = 10 + Math.floor(Math.random() * 7);
+      for (var i = 0; i < count; i++) {
+        var ang = Math.random() * Math.PI * 2;
+        var spd = 1.8 + Math.random() * 4.5;
+        burstParts.push({
+          x: cx_w + (Math.random() - 0.5) * 6,
+          y: cy_w + (Math.random() - 0.5) * 6,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          targetOrb: 70 + Math.random() * maxR * 0.85,
+          size: 0.9 + Math.random() * 2.0,
+          alpha: 0.55 + Math.random() * 0.45,
+          col: burstCols[Math.floor(Math.random() * burstCols.length)],
+          life: 1.0,
+          settled: false,
+          orb: 0, orbAngle: 0,
+          drift: (Math.random() - 0.5) * 0.003,
+          orbSpeed: Math.random() * 0.3 + 0.05,
+        });
+      }
+    }
+
+    function drawBurstParts() {
+      var cx = W / 2, cy = H / 2;
+      for (var i = burstParts.length - 1; i >= 0; i--) {
+        var p = burstParts[i];
+        if (!p.settled) {
+          var dx = cx - p.x, dy = cy - p.y;
+          var dist = Math.hypot(dx, dy) || 1;
+          var grav = Math.min(1.1, 180 / (dist * dist * 0.015 + 1));
+          p.vx += (dx / dist) * grav;
+          p.vy += (dy / dist) * grav;
+          p.vx *= 0.965;
+          p.vy *= 0.965;
+          p.x += p.vx;
+          p.y += p.vy;
+          /* Settle into orbit when near target radius and velocity is low enough */
+          if (Math.abs(dist - p.targetOrb) < 18 && Math.hypot(p.vx, p.vy) < 3) {
+            p.settled = true;
+            p.orb = dist;
+            p.orbAngle = Math.atan2(p.y - cy, p.x - cx);
+            var tang = p.vx * -(dy / dist) + p.vy * (dx / dist);
+            p.drift = (tang / dist) * 0.7;
+          }
+        } else {
+          p.orbAngle += p.drift + p.orbSpeed * 0.003;
+          p.orb += Math.sin(t + p.orbAngle) * 0.12;
+          p.x = cx + Math.cos(p.orbAngle) * p.orb;
+          p.y = cy + Math.sin(p.orbAngle) * p.orb;
+          p.life -= 0.0012;
+          if (p.life <= 0) { burstParts.splice(i, 1); continue; }
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = rgba(p.col, p.alpha * Math.min(1, p.life * 3));
+        ctx.fill();
+      }
+    }
+
+    window.PRISSS_BURST = spawnBurst;
 
     function resize() {
       W = canvas.width = innerWidth;
@@ -1007,6 +1080,7 @@ canvas {
         a.draw(t);
       });
       drawParticles(t);
+      drawBurstParts();
       drawGlow();
       requestAnimationFrame(frame);
     }
@@ -1065,93 +1139,5 @@ canvas {
 </script>
 <!-- visuals:inline:end -->
 <script src="js/bio.js" defer data-page-script="js/bio.js"></script>
-<script>
-/* ── Tape effect: Web Audio chain, built immediately so MediaElementSource
-   is always connected before audio.js ever calls audio.play() ── */
-(function () {
-  'use strict';
-  var audioEl = document.getElementById('site-audio');
-  if (!audioEl || !window.AudioContext && !window.webkitAudioContext) return;
-
-  var actx, chain, tapeOn = false;
-
-  try {
-    actx = new (window.AudioContext || window.webkitAudioContext)();
-  } catch (e) { return; }
-
-  /* Build the graph immediately — MediaElementSource must be wired up before
-     audio.play() is called, otherwise the hijack causes a gap in output */
-  (function buildChain() {
-    var src = actx.createMediaElementSource(audioEl);
-
-    var wowOsc = actx.createOscillator();
-    wowOsc.frequency.value = 0.7;
-    var wowGain = actx.createGain();
-    wowGain.gain.value = 0.0001;
-
-    var flutterOsc = actx.createOscillator();
-    flutterOsc.frequency.value = 9;
-    var flutterGain = actx.createGain();
-    flutterGain.gain.value = 0.0001;
-
-    var delay = actx.createDelay(0.06);
-    delay.delayTime.value = 0.003;
-    wowOsc.connect(wowGain);     wowGain.connect(delay.delayTime);
-    flutterOsc.connect(flutterGain); flutterGain.connect(delay.delayTime);
-    wowOsc.start(); flutterOsc.start();
-
-    var shaper = actx.createWaveShaper();
-    var curve = new Float32Array(512);
-    for (var i = 0; i < 512; i++) {
-      var x = (i * 2 / 511) - 1;
-      curve[i] = Math.tanh(x * 2.2) * 0.88 + x * x * 0.06 * (x > 0 ? 1 : -1);
-    }
-    shaper.curve = curve;
-    shaper.oversample = '4x';
-
-    var lpf = actx.createBiquadFilter();
-    lpf.type = 'lowpass';
-    lpf.frequency.value = 20000;
-    lpf.Q.value = 0.4;
-
-    var out = actx.createGain();
-    out.gain.value = 1.05;
-
-    src.connect(delay);
-    delay.connect(shaper);
-    shaper.connect(lpf);
-    lpf.connect(out);
-    out.connect(actx.destination);
-
-    chain = { wowGain: wowGain, flutterGain: flutterGain, lpf: lpf };
-  })();
-
-  /* Resume AudioContext on any user gesture — required by browser autoplay policy */
-  function resume() { if (actx.state === 'suspended') actx.resume(); }
-  document.addEventListener('pointerdown', resume, { passive: true });
-  document.addEventListener('keydown', resume);
-  audioEl.addEventListener('play', resume);
-
-  function enableTape() {
-    if (tapeOn || !chain) return;
-    tapeOn = true;
-    var now = actx.currentTime;
-    chain.wowGain.gain.setTargetAtTime(0.003, now, 0.4);
-    chain.flutterGain.gain.setTargetAtTime(0.0006, now, 0.25);
-    chain.lpf.frequency.setTargetAtTime(6000, now, 0.5);
-  }
-
-  function disableTape() {
-    if (!tapeOn || !chain) return;
-    tapeOn = false;
-    var now = actx.currentTime;
-    chain.wowGain.gain.setTargetAtTime(0.0001, now, 0.5);
-    chain.flutterGain.gain.setTargetAtTime(0.0001, now, 0.35);
-    chain.lpf.frequency.setTargetAtTime(20000, now, 0.6);
-  }
-
-  window.PRISSS_TAPE = { enable: enableTape, disable: disableTape };
-})();
-</script>
 </body>
 </html>
