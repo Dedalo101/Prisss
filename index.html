@@ -905,6 +905,7 @@ canvas {
           col: burstCols[Math.floor(Math.random() * burstCols.length)],
           life: 1.0,
           settled: false,
+          frames: 0,          /* unsettled frame counter */
           orb: 0, orbAngle: 0,
           drift: (Math.random() - 0.5) * 0.003,
           orbSpeed: Math.random() * 0.3 + 0.05,
@@ -917,6 +918,7 @@ canvas {
       for (var i = burstParts.length - 1; i >= 0; i--) {
         var p = burstParts[i];
         if (!p.settled) {
+          p.frames++;
           var dx = cx - p.x, dy = cy - p.y;
           var dist = Math.hypot(dx, dy) || 1;
           var grav = Math.min(1.1, 180 / (dist * dist * 0.015 + 1));
@@ -926,20 +928,23 @@ canvas {
           p.vy *= 0.965;
           p.x += p.vx;
           p.y += p.vy;
-          /* Settle into orbit when near target radius and velocity is low enough */
+          /* Settle into orbit, or force-fade if stuck after 240 frames (~4s) */
           if (Math.abs(dist - p.targetOrb) < 18 && Math.hypot(p.vx, p.vy) < 3) {
             p.settled = true;
             p.orb = dist;
             p.orbAngle = Math.atan2(p.y - cy, p.x - cx);
             var tang = p.vx * -(dy / dist) + p.vy * (dx / dist);
             p.drift = (tang / dist) * 0.7;
+          } else if (p.frames > 240) {
+            p.life -= 0.025; /* fast fade for stuck particles */
+            if (p.life <= 0) { burstParts.splice(i, 1); continue; }
           }
         } else {
           p.orbAngle += p.drift + p.orbSpeed * 0.003;
           p.orb += Math.sin(t + p.orbAngle) * 0.12;
           p.x = cx + Math.cos(p.orbAngle) * p.orb;
           p.y = cy + Math.sin(p.orbAngle) * p.orb;
-          p.life -= 0.0012;
+          p.life -= 0.004; /* ~4s orbital life before fading */
           if (p.life <= 0) { burstParts.splice(i, 1); continue; }
         }
         ctx.beginPath();
@@ -1022,21 +1027,6 @@ canvas {
         ctx.fill();
       });
 
-      ctx.lineWidth = 0.25;
-      for (var i = 0; i < parts.length; i++) {
-        for (var j = i + 1; j < parts.length; j++) {
-          var dx = parts[i].x - parts[j].x;
-          var dy = parts[i].y - parts[j].y;
-          var d = Math.sqrt(dx * dx + dy * dy);
-          if (d < 80) {
-            ctx.strokeStyle = rgba(C.groove, (1 - d / 80) * 0.1);
-            ctx.beginPath();
-            ctx.moveTo(parts[i].x, parts[i].y);
-            ctx.lineTo(parts[j].x, parts[j].y);
-            ctx.stroke();
-          }
-        }
-      }
     }
 
     function drawGlow() {
